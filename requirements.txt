@@ -6,5 +6,5 @@ gunicorn==23.0.0
 waitress==3.0.2
 django-ckeditor == 6.1.0
 whitenoise == 6.11.0
-Pillow==9.5.0
+#Pillow==9.5.0
 
