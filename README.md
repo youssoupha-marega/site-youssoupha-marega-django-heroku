@@ -1,4 +1,4 @@
-# site-youssoupha-marega-django-heroku
+# Portfolio 
 
 Description
 -----------
@@ -149,5 +149,3 @@ Remarque sur l'hébergement
 - Le site est déployé sur Heroku et accessible à :
 
 - https://site-youssoupha-marega-django-183342614e64.herokuapp.com/
-
-Si vous souhaitez que je génère un README en anglais ou ajoute des badges (CI, Docker, Heroku), dites-le.
