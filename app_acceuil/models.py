@@ -55,6 +55,7 @@ class Education(models.Model):
 	title = models.CharField(max_length=255, verbose_name=_("Titre de la formation"))
 	date = models.CharField(max_length=100, blank=True, verbose_name=_("Date / Années"))
 	institution = models.CharField(max_length=255, blank=True, verbose_name=_("Établissement"))
+	icon = models.ImageField(upload_to="education/", blank=True, null=True, verbose_name=_("Icône"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
 
 	class Meta:
@@ -72,6 +73,7 @@ class Experience(models.Model):
 	date = models.CharField(max_length=100, blank=True, verbose_name=_("Date / Période"))
 	company = models.CharField(max_length=255, blank=True, verbose_name=_("Entreprise"))
 	company_url = models.URLField(blank=True, verbose_name=_("Lien entreprise"))
+	icon = models.ImageField(upload_to="experience/", blank=True, null=True, verbose_name=_("Icône"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
 
 	class Meta:
@@ -81,4 +83,47 @@ class Experience(models.Model):
 
 	def __str__(self) -> str:
 		return f"{self.title} — {self.company}"
+
+
+class Section(models.Model):
+	"""Section dynamique (Compétences, Stack techniques, Intérêts, Valeurs, etc.)"""
+	SECTION_TYPES = (
+		('competences', 'Compétences'),
+		('stack', 'Stack techniques'),
+		('interets', 'Intérêts'),
+		('valeurs', 'Valeurs'),
+		('custom', 'Personnalisé'),
+	)
+	
+	profile = models.ForeignKey(SiteProfile, on_delete=models.CASCADE, related_name="sections")
+	section_type = models.CharField(max_length=20, choices=SECTION_TYPES, verbose_name=_("Type de section"))
+	title = models.CharField(max_length=200, verbose_name=_("Titre de la section"))
+	is_active = models.BooleanField(default=True, verbose_name=_("Afficher cette section"))
+	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre d'affichage"))
+
+	class Meta:
+		ordering = ("order",)
+		verbose_name = _("Section")
+		verbose_name_plural = _("Sections")
+
+	def __str__(self) -> str:
+		return f"{self.title}"
+
+
+class SectionItem(models.Model):
+	"""Item d'une section (compétence, stack, intérêt, valeur, etc.)"""
+	section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name="items")
+	icon = models.ImageField(upload_to="sections/", blank=True, null=True, verbose_name=_("Icône"))
+	title = models.CharField(max_length=255, verbose_name=_("Titre principal"))
+	subtitle = models.CharField(max_length=500, blank=True, verbose_name=_("Sous-titre / Détails"))
+	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
+
+	class Meta:
+		ordering = ("order",)
+		verbose_name = _("Élément de section")
+		verbose_name_plural = _("Éléments de section")
+
+	def __str__(self) -> str:
+		return f"{self.section.title} - {self.title}"
+
 

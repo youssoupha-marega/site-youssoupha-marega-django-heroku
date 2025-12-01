@@ -68,10 +68,11 @@
         font-size: 0.9rem;
     }
     .edu-icon img {
-        width: 30px;
-        height: 30px;
-        object-fit: contain;
+        width: 90%;
+        height: 90%;
+        object-fit: cover;
         display: block;
+        border-radius: 6px;
     }
     .experience-item {
         display: flex;
@@ -168,12 +169,14 @@
                         <div class="portfolio-card h-100">
                             <h3>Formation</h3>
                                 <div class="education-list">
-                                    {% if site_profile and site_profile.educations.exists %}
+                                        {% if site_profile and site_profile.educations.exists %}
                                         {% for edu in site_profile.educations.all %}
                                             <div class="education-item">
+                                                {% if edu.icon %}
                                                 <div class="edu-icon">
-                                                    <img src="{% static 'img/chapeau_diplome.png' %}" alt="chapeau diplôme" class="edu-img">
+                                                    <img src="{{ edu.icon.url }}" alt="{{ edu.title }}" class="edu-img">
                                                 </div>
+                                                {% endif %}
                                                 <div>
                                                     <div class="edu-title">{{ edu.title }}{% if edu.date %}, <span class="text-muted">{{ edu.date }}</span>{% endif %}</div>
                                                     {% if edu.institution %}
@@ -183,11 +186,8 @@
                                             </div>
                                         {% endfor %}
                                     {% else %}
-                                        <!-- Static fallback entries -->
+                                        <!-- Static fallback entries (no icon placeholders) -->
                                         <div class="education-item">
-                                            <div class="edu-icon">
-                                                <img src="{% static 'img/chapeau_diplome.png' %}" alt="chapeau diplôme" class="edu-img">
-                                            </div>
                                             <div>
                                                 <div class="edu-title">Maitrise en statistique, <span class="text-muted">2023</span></div>
                                                 <div class="edu-institution">Université du Québec à Montréal</div>
@@ -195,9 +195,6 @@
                                         </div>
 
                                         <div class="education-item">
-                                            <div class="edu-icon">
-                                                <img src="{% static 'img/chapeau_diplome.png' %}" alt="chapeau diplôme" class="edu-img">
-                                            </div>
                                             <div>
                                                 <div class="edu-title">Baccalauréat en mathématique et économie, <span class="text-muted">2019</span></div>
                                                 <div class="edu-institution">Université Claude Bernard Lyon 1</div>
@@ -216,9 +213,11 @@
                                     {% if site_profile and site_profile.experiences.exists %}
                                         {% for exp in site_profile.experiences.all %}
                                             <div class="experience-item">
+                                                {% if exp.icon %}
                                                 <div class="edu-icon">
-                                                    <img src="{% static 'img/sac_travailleur.png' %}" alt="exp icon" class="exp-img">
+                                                    <img src="{{ exp.icon.url }}" alt="{{ exp.title }}" class="exp-img">
                                                 </div>
+                                                {% endif %}
                                                 <div>
                                                     <div class="edu-title">{{ exp.title }}{% if exp.date %}, <span class="text-muted">{{ exp.date }}</span>{% endif %}</div>
                                                     {% if exp.company %}
@@ -228,11 +227,8 @@
                                             </div>
                                         {% endfor %}
                                     {% else %}
-                                        <!-- Static fallback entries -->
+                                        <!-- Static fallback entries (no icon placeholders) -->
                                         <div class="experience-item">
-                                            <div class="edu-icon">
-                                                <img src="{% static 'img/sac_travailleur.png' %}" alt="sac travailleur" class="exp-img">
-                                            </div>
                                             <div>
                                                 <div class="edu-title">Scientifique de données, <span class="text-muted">2023-2026</span></div>
                                                 <div class="edu-institution">Nordikeau</div>
@@ -240,9 +236,6 @@
                                         </div>
 
                                         <div class="experience-item">
-                                            <div class="edu-icon">
-                                                <img src="{% static 'img/sac_travailleur.png' %}" alt="sac travailleur" class="exp-img">
-                                            </div>
                                             <div>
                                                 <div class="edu-title">Analyste de données, <span class="text-muted">2022-2023</span></div>
                                                 <div class="edu-institution">STATQAM</div>
@@ -253,57 +246,101 @@
                             </div>
                     </div>
 
-                    <!-- Compétences -->
-                    <div class="col-md-6">
-                        <div class="portfolio-card h-100">
-                            <h3>Compétences</h3>
-                            <ul class="mb-0">
-                                <li>Data Science & ML</li>
-                                <li>Feature Engineering</li>
-                                <li>Gestion de projets data</li>
-                                <li>Communication des résultats</li>
-                            </ul>
+                    <!-- Sections dynamiques (Compétences, Stack, Intérêts, Valeurs, etc.) -->
+                    {% if site_profile and site_profile.sections.exists %}
+                        {% for section in site_profile.sections.all %}
+                            {% if section.is_active %}
+                                <div class="col-md-6">
+                                    <div class="portfolio-card h-100">
+                                        <h3>{{ section.title }}</h3>
+                                        <div class="education-list">
+                                            {% for item in section.items.all %}
+                                                <div class="education-item">
+                                                    {% if item.icon %}
+                                                    <div class="edu-icon">
+                                                        <img src="{{ item.icon.url }}" alt="{{ item.title }}" class="edu-img">
+                                                    </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <div class="edu-title">{{ item.title }}</div>
+                                                        {% if item.subtitle %}
+                                                            <div class="edu-institution">{{ item.subtitle }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <!-- Fallback statique si aucune section n'est configurée -->
+                        <div class="col-md-6">
+                            <div class="portfolio-card h-100">
+                                <h3>Compétences</h3>
+                                <div class="education-list">
+                                    <div class="education-item">
+                                        <div class="edu-icon">
+                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="compétence" class="edu-img">
+                                        </div>
+                                        <div>
+                                            <div class="edu-title">Data Science & ML</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Stack techniques -->
-                    <div class="col-md-6">
-                        <div class="portfolio-card h-100">
-                            <h3>Stack techniques</h3>
-                            <ul class="mb-0">
-                                <li>Python, MLflow, scikit-learn</li>
-                                <li>AWS (SageMaker, Lambda, S3)</li>
-                                <li>Docker, Git, CI/CD</li>
-                                <li>SQL, NoSQL, APIs</li>
-                            </ul>
+                        <div class="col-md-6">
+                            <div class="portfolio-card h-100">
+                                <h3>Stack techniques</h3>
+                                <div class="education-list">
+                                    <div class="education-item">
+                                        <div class="edu-icon">
+                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="stack" class="edu-img">
+                                        </div>
+                                        <div>
+                                            <div class="edu-title">Programmation</div>
+                                            <div class="edu-institution">Python, SQL, R</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Intérêts -->
-                    <div class="col-md-6">
-                        <div class="portfolio-card h-100">
-                            <h3>Intérêts</h3>
-                            <ul class="mb-0">
-                                <li>Time Series Forecasting</li>
-                                <li>Ville intelligente / Eau potable</li>
-                                <li>Entrepreneuriat data</li>
-                                <li>Mentorat & vulgarisation</li>
-                            </ul>
+                        <div class="col-md-6">
+                            <div class="portfolio-card h-100">
+                                <h3>Intérêts</h3>
+                                <div class="education-list">
+                                    <div class="education-item">
+                                        <div class="edu-icon">
+                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="intérêt" class="edu-img">
+                                        </div>
+                                        <div>
+                                            <div class="edu-title">Time Series Forecasting</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Valeurs -->
-                    <div class="col-md-6">
-                        <div class="portfolio-card h-100">
-                            <h3>Valeurs</h3>
-                            <ul class="mb-0">
-                                <li>Excellence technique</li>
-                                <li>Impact social</li>
-                                <li>Apprentissage continu</li>
-                                <li>Collaboration</li>
-                            </ul>
+                        <div class="col-md-6">
+                            <div class="portfolio-card h-100">
+                                <h3>Valeurs</h3>
+                                <div class="education-list">
+                                    <div class="education-item">
+                                        <div class="edu-icon">
+                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="valeur" class="edu-img">
+                                        </div>
+                                        <div>
+                                            <div class="edu-title">Excellence technique</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
 
                 </div>
             </div>

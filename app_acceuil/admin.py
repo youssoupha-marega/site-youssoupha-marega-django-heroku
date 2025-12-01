@@ -4,19 +4,39 @@ from django.utils.safestring import mark_safe
 from django import forms
 from ckeditor.widgets import CKEditorWidget
 
-from .models import SiteProfile, Education, Experience
+from .models import SiteProfile, Education, Experience, Section, SectionItem
 
 
 class EducationInline(admin.TabularInline):
 	model = Education
 	extra = 1
-	fields = ("title", "institution", "date", "order")
+	fields = ("title", "institution", "date", "icon", "order")
+	readonly_fields = ("icon_preview",)
+
+	def icon_preview(self, obj):
+		if obj and obj.icon:
+			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
+		return "-"
 
 
 class ExperienceInline(admin.TabularInline):
 	model = Experience
 	extra = 1
-	fields = ("title", "company", "company_url", "date", "order")
+	fields = ("title", "company", "company_url", "date", "icon", "order")
+	readonly_fields = ("icon_preview",)
+
+	def icon_preview(self, obj):
+		if obj and obj.icon:
+			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
+		return "-"
+
+
+class SectionItemInline(admin.TabularInline):
+	model = SectionItem
+	extra = 0
+	can_delete = True
+	show_change_link = True
+	fields = ("title", "subtitle", "icon", "order")
 
 
 class SiteProfileForm(forms.ModelForm):
@@ -54,13 +74,54 @@ class SiteProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
-	list_display = ("title", "institution", "date", "profile", "order")
+	list_display = ("title", "institution", "date", "profile", "order", "icon_preview")
 	list_filter = ("profile",)
 	search_fields = ("title", "institution")
+	readonly_fields = ("icon_preview",)
+
+	def icon_preview(self, obj):
+		if obj and obj.icon:
+			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
+		return "-"
+
+	icon_preview.short_description = "Aperçu icône"
 
 
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
-	list_display = ("title", "company", "date", "profile", "order")
+	list_display = ("title", "company", "date", "profile", "order", "icon_preview")
 	list_filter = ("profile",)
 	search_fields = ("title", "company")
+	readonly_fields = ("icon_preview",)
+
+	def icon_preview(self, obj):
+		if obj and obj.icon:
+			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
+		return "-"
+
+	icon_preview.short_description = "Aperçu icône"
+
+
+@admin.register(Section)
+class SectionAdmin(admin.ModelAdmin):
+	inlines = [SectionItemInline]
+	list_display = ("title", "section_type", "is_active", "order", "profile")
+	list_filter = ("section_type", "is_active", "profile")
+	search_fields = ("title",)
+	list_editable = ("is_active", "order")
+
+
+@admin.register(SectionItem)
+class SectionItemAdmin(admin.ModelAdmin):
+	list_display = ("title", "subtitle", "section", "order", "icon_preview")
+	list_filter = ("section",)
+	search_fields = ("title", "subtitle")
+	readonly_fields = ("icon_preview",)
+
+	def icon_preview(self, obj):
+		if obj and obj.icon:
+			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:50px;' />")
+		return "-"
+	
+	icon_preview.short_description = "Aperçu icône"
+
