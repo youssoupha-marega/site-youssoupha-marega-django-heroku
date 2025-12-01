@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1 class="section-title mb-4">Articles de blog</h1>
+
+    <div class="row g-4">
+        {% for article in articles %}
+        <div class="col-md-4">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <div class="card-title-row">
+                        {% if article.main_image %}
+                        <div class="card-logo">
+                            <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
+                        </div>
+                        {% endif %}
+                        <h3 class="card-title h5">{{ article.title }}</h3>
+                    </div>
+                    <p class="card-text text-muted small">
+                        <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
+                        {{ article.author_profession }}
+                        <span class="mx-1">|</span>
+                        {{ article.published_at|date:"d M Y" }}
+                    </p>
+                    <p class="card-text">{{ article.resume|striptags|truncatewords:20 }}</p>
+                    <a href="{% url 'blogue_detail' article.slug %}" class="btn btn-custom-primary">Lire l'article</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Aucun article disponible pour le moment. Revenez bientôt !
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

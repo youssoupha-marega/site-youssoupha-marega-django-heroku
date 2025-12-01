@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1 class="section-title mb-4">Services offerts</h1>
+
+    <div class="row g-4">
+        {% for service in services %}
+        <div class="col-md-4">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">{{ service.title }}</h2>
+                    <p class="card-text mb-4">{{ service.resume|striptags }}</p>
+
+                    <div class="d-flex flex-column gap-2">
+                        {% if service.calendly_url %}
+                        <a href="{{ service.calendly_url }}" target="_blank" class="btn btn-custom-primary">
+                            📅 Prendre rendez-vous
+                        </a>
+                        {% endif %}
+                           {% if site_profile and site_profile.email %}
+                           <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" class="btn btn-outline-primary">✉️ Envoyer un mail</a>
+                           {% else %}
+                           <a href="{% url 'contact' %}" class="btn btn-outline-primary">✉️ Nous contacter</a>
+                           {% endif %}
+                        <a href="{% url 'service_detail' service.slug %}" class="btn btn-custom-outline">
+                            En savoir plus
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Aucun service disponible pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

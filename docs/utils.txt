@@ -1,0 +1,10 @@
+# Activation environnemnt virtuelle
+C:\Users\ymarega\...\django_docker_app>
+venv\Scripts\activate
+pip install -r requirements.txt
+
+## lancer le serveur
+python manage.py runserver
+
+# lancer le container
+C:\Users\ymarega\...\django_docker_app>docker-compose up --build

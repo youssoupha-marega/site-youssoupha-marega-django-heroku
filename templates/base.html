@@ -1,0 +1,127 @@
+<!-- template\base.html -->
+
+{% load static %}
+{% load utils %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if site_profile and site_profile.site_title %}{{ site_profile.site_title }}{% else %}Youssoupha Marega{% endif %}</title>
+    <!-- Favicon -->
+    {% if site_profile and site_profile.favicon %}
+    <link rel="icon" type="image/png" href="{{ site_profile.favicon.url }}">
+    {% else %}
+    <link rel="icon" type="image/png" href="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}">
+    {% endif %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app_acceuil/css/styles.css' %}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'acceuil' %}">
+                {% comment %} Decide the avatar classes based on navbar_avatar_shape {% endcomment %}
+                {% comment %} Prefer `navbar_avatar` if provided, else fallback to `profile_photo`, then static image. {% endcomment %}
+                {% if site_profile and site_profile.navbar_avatar %}
+                    {% if site_profile.navbar_avatar_shape == 'circle' %}
+                        <img src="{{ site_profile.navbar_avatar.url }}" alt="Logo" width="40" height="40" class="rounded-circle me-2">
+                    {% elif site_profile.navbar_avatar_shape == 'square' %}
+                        <img src="{{ site_profile.navbar_avatar.url }}" alt="Logo" width="40" height="40" class="rounded-2 me-2" style="border-radius:8px;">
+                    {% else %}
+                        <img src="{{ site_profile.navbar_avatar.url }}" alt="Logo" width="40" height="40" class="me-2" style="border-radius:0;">
+                    {% endif %}
+                {% elif site_profile and site_profile.profile_photo %}
+                    {% if site_profile.navbar_avatar_shape == 'circle' %}
+                        <img src="{{ site_profile.profile_photo.url }}" alt="Logo" width="40" height="40" class="rounded-circle me-2">
+                    {% elif site_profile.navbar_avatar_shape == 'square' %}
+                        <img src="{{ site_profile.profile_photo.url }}" alt="Logo" width="40" height="40" class="rounded-2 me-2" style="border-radius:8px;">
+                    {% else %}
+                        <img src="{{ site_profile.profile_photo.url }}" alt="Logo" width="40" height="40" class="me-2" style="border-radius:0;">
+                    {% endif %}
+                {% else %}
+                    {% if site_profile and site_profile.navbar_avatar_shape == 'square' %}
+                        <img src="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}" alt="Logo" width="40" height="40" class="rounded-2 me-2" style="border-radius:8px;">
+                    {% elif site_profile and site_profile.navbar_avatar_shape == 'none' %}
+                        <img src="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}" alt="Logo" width="40" height="40" class="me-2" style="border-radius:0;">
+                    {% else %}
+                        <img src="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}" alt="Logo" width="40" height="40" class="rounded-circle me-2">
+                    {% endif %}
+                {% endif %}
+                <span>{% if site_profile and site_profile.site_title %}{{ site_profile.site_title }}{% elif site_profile %}{{ site_profile.first_name }} {{ site_profile.last_name }}{% else %}Youssoupha Marega{% endif %}</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav ms-auto">
+                    {% for item in menu_items %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name|prefix == item.name|prefix %}active fw-bold text-primary{% endif %}"
+                            href="{% url item.name %}">
+                            {{ item.label }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container-fluid px-3 mt-3">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container-fluid px-3 mt-3 mb-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-bleed bg-light text-muted border-top py-3 mt-4">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-2 mb-md-0">
+                        <small>
+                        © {% now "Y" %} – {% if site_profile %}{{ site_profile.first_name }} {{ site_profile.last_name }}{% else %}Youssoupha Marega{% endif %} • Tous droits réservés
+                    </small>
+                </div>
+                <div>
+                    <small>
+                        <a href="{% url 'admin:index' %}" class="text-decoration-none me-3">Admin</a>
+                        {% if site_profile and site_profile.email %}
+                        <a href="mailto:{{ site_profile.email }}" class="text-decoration-none me-3">Contact</a>
+                        {% endif %}
+                        {% if site_profile and site_profile.github_url %}
+                        <a href="{{ site_profile.github_url }}" target="_blank" class="text-decoration-none me-3">GitHub</a>
+                        {% else %}
+                        <a href="https://github.com/ymarega" target="_blank" class="text-decoration-none me-3">GitHub</a>
+                        {% endif %}
+                        {% if site_profile and site_profile.linkedin_url %}
+                        <a href="{{ site_profile.linkedin_url }}" target="_blank" class="text-decoration-none">LinkedIn</a>
+                        {% else %}
+                        <a href="https://www.linkedin.com/in/youssoupha-marega/" target="_blank" class="text-decoration-none">LinkedIn</a>
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FIN FOOTER -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

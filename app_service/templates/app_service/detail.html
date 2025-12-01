@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <article>
+        <!-- En-tête du service -->
+        <div class="mb-4">
+            <h1 class="section-title">{{ service.title }}</h1>
+        </div>
+
+        <!-- Résumé -->
+        <div class="mb-4">
+            <p class="lead">{{ service.resume }}</p>
+        </div>
+
+        <!-- Séparateur -->
+        <hr class="my-4">
+
+        <!-- Description complète -->
+        <div class="mb-5">
+            <div class="content-body">
+                {{ service.content|safe }}
+            </div>
+        </div>
+
+        <!-- Zone de call-to-action -->
+        <div class="card bg-light border-0 mb-5">
+            <div class="card-body text-center py-5">
+                <h3 class="h4 mb-3">Intéressé par ce service ?</h3>
+                <p class="mb-4">Prenez rendez-vous pour discuter de votre projet</p>
+
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if service.calendly_url %}
+                    <a href="{{ service.calendly_url }}" target="_blank" class="btn btn-custom-primary btn-lg">
+                        📅 Prendre rendez-vous
+                    </a>
+                    {% endif %}
+                    {% if site_profile and site_profile.email %}
+                    <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" class="btn btn-custom-outline btn-lg">
+                        ✉️ M'envoyer un email
+                    </a>
+                    {% else %}
+                    <a href="{% url 'contact' %}" class="btn btn-custom-outline btn-lg">
+                        ✉️ M'envoyer un email
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton retour -->
+        <div class="mt-4">
+            <a href="{% url 'service_list' %}" class="btn btn-custom-outline">← Retour aux services</a>
+        </div>
+    </article>
+</div>
+
+{% endblock %}

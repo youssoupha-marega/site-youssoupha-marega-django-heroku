@@ -1,0 +1,30 @@
+Pour ajouter des articles, la méthode standard avec Django est d'utiliser l'interface d'administration. Voici comment faire :
+
+1. Créer un compte administrateur (Superuser)
+Si vous n'en avez pas encore créé un, ouvrez votre terminal (là où vous lancez runserver) et arrêtez le serveur (CTRL+C), puis lancez cette commande :
+
+bash
+python manage.py createsuperuser
+Suivez les instructions (nom d'utilisateur, email, mot de passe).
+
+2. Accéder à l'interface d'administration
+Une fois le superuser créé, relancez votre serveur :
+
+bash
+python manage.py runserver
+Ensuite, allez sur : http://127.0.0.1:8000/admin
+
+3. Ajouter un article
+Connectez-vous avec vos identifiants.
+Vous verrez une section APP_BLOG. Cliquez sur Articles de blog.
+Cliquez sur le bouton Ajouter Article de blog (en haut à droite).
+Remplissez le formulaire :
+Titre : Le titre de votre article.
+Slug : Il se remplira automatiquement basé sur le titre (c'est l'URL de l'article).
+Résumé : Une courte introduction qui apparaîtra sur la page d'accueil.
+Contenu : Le corps de votre article.
+Image principale : (Optionnel) Une image pour illustrer l'article.
+Cliquez sur Enregistrer.
+Votre article sera immédiatement visible sur la page d'accueil (section Blogues) et sur la page liste des blogs !
+
+Note : Actuellement, le champ "Contenu" est du texte brut. Si vous souhaitez pouvoir mettre du gras, des titres ou des images directement dans le texte (comme dans Word), nous pourrons installer un éditeur de texte riche (comme CKEditor) par la suite.

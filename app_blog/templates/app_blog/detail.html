@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <article>
+        <!-- En-tête de l'article -->
+        <div class="mb-4">
+            <h1 class="section-title">{{ article.title }}</h1>
+            <p class="text-muted">
+                <small>
+                    <strong>Auteur :</strong>
+                    <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
+                    {{ article.author_profession }}
+                </small>
+            </p>
+            <p class="text-muted">
+                <small>Publié le {{ article.published_at|date:"d M Y" }}</small>
+                <small> | Mis à jour le {{ article.updated_at|date:"d M Y" }}</small>
+            </p>
+        </div>
+
+        <!-- Image principale -->
+        {% if article.main_image %}
+        <div class="mb-4">
+            <img src="{{ article.main_image.url }}" class="img-fluid rounded shadow" alt="{{ article.title }}"
+                style="max-width: 100%;">
+        </div>
+        {% endif %}
+
+        <!-- Résumé -->
+        <div class="mb-4">
+            <p class="lead">{{ article.resume }}</p>
+        </div>
+
+        <!-- Séparateur -->
+        <hr class="my-4">
+
+        <!-- Contenu complet -->
+        <div class="mb-4">
+            <div class="content-body">
+                {{ article.content|safe }}
+            </div>
+        </div>
+
+        <!-- Bouton retour -->
+        <div class="mt-5">
+            <a href="{% url 'blogue_list' %}" class="btn btn-custom-outline">← Retour aux articles</a>
+        </div>
+    </article>
+</div>
+
+{% endblock %}
