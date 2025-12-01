@@ -10,4 +10,4 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
 
 
-#(venv) C:\Users\ymarega\OneDrive - NORDIKeau\Bureau\Apprentissage\Django\django_docker_app>docker-compose up --build
+#(venv) C:\Users\ymarega\OneDrive - NOdjango_docker_app>docker-compose up --build
