@@ -31,6 +31,11 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',  # Autorise tous les sous-domaines herokuapp.com
 ]
 
+# CSRF trusted origins for Heroku
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.herokuapp.com',
+]
+
 
 # Application definition
 
