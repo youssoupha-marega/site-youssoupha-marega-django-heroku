@@ -1,0 +1,87 @@
+{% comment %}
+Composant réutilisable pour afficher une carte de contenu (projet, blog, service).
+
+Paramètres requis:
+- item: L'objet de contenu (Project, BlogPost ou Service)
+- detail_url: L'URL de la page détail
+- button_text: Texte du bouton principal (ex: "Voir le projet", "Lire l'article")
+
+Paramètres optionnels:
+- show_image: Afficher l'image principale (défaut: True)
+- show_author: Afficher les infos auteur (défaut: True)
+- show_date: Afficher la date de publication (défaut: True)
+- show_extra_button: Afficher un bouton supplémentaire (défaut: False)
+- extra_button_url: URL du bouton supplémentaire
+- extra_button_text: Texte du bouton supplémentaire
+- truncate_words: Nombre de mots pour truncatewords (défaut: 20)
+
+Exemples d'utilisation:
+
+1. Carte de projet:
+{% include 'includes/content_card.html' with item=projet detail_url=projet_detail_url button_text="Voir le projet" %}
+
+2. Carte de blog:
+{% include 'includes/content_card.html' with item=article detail_url=article_detail_url button_text="Lire l'article" %}
+
+3. Carte de service avec bouton Calendly:
+{% include 'includes/content_card.html' with item=service detail_url=service_detail_url button_text="En savoir plus" show_extra_button=True extra_button_url=service.calendly_url extra_button_text="Prendre rendez-vous" %}
+{% endcomment %}
+
+{% load static %}
+
+<div class="card card-custom">
+    <div class="card-body">
+        {# Titre de la carte #}
+        <h3 class="card-title h5 mb-2">{{ item.title }}</h3>
+        
+        {# Image principale (optionnelle) #}
+        {% if show_image|default:True and item.main_image %}
+        <div class="card-media mb-3">
+            <img src="{{ item.main_image.url }}" alt="{{ item.title }}" class="img-fluid rounded">
+        </div>
+        {% endif %}
+        
+        {# Métadonnées: auteur et date #}
+        {% if show_author|default:True or show_date|default:True %}
+        <p class="card-text text-muted small mb-2">
+            {% if show_author|default:True %}
+                <a href="mailto:{{ item.author_email }}">{{ item.author_name }}</a>{% if item.author_profession %}, {{ item.author_profession }}{% endif %}
+            {% endif %}
+            {% if show_author|default:True and show_date|default:True and item.published_at %}
+                <span class="mx-1">|</span>
+            {% endif %}
+            {% if show_date|default:True and item.published_at %}
+                {{ item.published_at|date:"d M Y" }}
+            {% endif %}
+        </p>
+        {% endif %}
+        
+        {# Résumé du contenu #}
+        {% if item.resume %}
+        <p class="card-text mb-3">
+            {% if truncate_words %}
+                {{ item.resume|striptags|truncatewords:truncate_words }}
+            {% else %}
+                {{ item.resume|striptags|truncatewords:20 }}
+            {% endif %}
+        </p>
+        {% endif %}
+        
+        {# Boutons d'action #}
+        <div class="d-flex gap-2 flex-wrap mt-3">
+            {# Bouton supplémentaire (ex: Calendly pour services) #}
+            {% if show_extra_button and extra_button_url %}
+            <a href="{{ extra_button_url }}" 
+               {% if extra_button_target %}target="{{ extra_button_target }}"{% endif %}
+               class="btn btn-custom-primary btn-sm">
+                {{ extra_button_text|default:"Action" }}
+            </a>
+            {% endif %}
+            
+            {# Bouton principal de détail #}
+            <a href="{{ detail_url }}" class="btn {% if show_extra_button %}btn-custom-outline{% else %}btn-custom-primary{% endif %} btn-sm">
+                {{ button_text|default:"En savoir plus" }}
+            </a>
+        </div>
+    </div>
+</div>

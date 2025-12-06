@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
@@ -45,7 +46,11 @@
 
         <!-- Bouton retour -->
         <div class="mt-5">
-            <a href="{% url 'blogue_list' %}" class="btn btn-custom-outline">← Retour aux articles</a>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                <a href="{% url 'profile_blogue_list' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug %}" class="btn btn-custom-outline">← Retour aux articles</a>
+            {% else %}
+                <a href="{% url 'blogue_list' %}" class="btn btn-custom-outline">← Retour aux articles</a>
+            {% endif %}
         </div>
     </article>
 </div>

@@ -128,24 +128,6 @@
     }
 
     /* experience images share the same styling via .edu-icon img */
-    /* Card media (image) occupies ~40% of card height */
-    .card-media {
-        width: 100%;
-        aspect-ratio: 16/9;
-        overflow: hidden;
-        margin: 10px 0;
-        border-radius: 8px;
-        background: #ffffff; /* match list pages */
-        border: 1px solid #e9ecef;
-    }
-    .card-media img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* show full image without cropping */
-        object-position: center center; /* center image for consistency */
-        display: block;
-        background-color: transparent;
-    }
 </style>
 
 <!-- ============================================ -->
@@ -392,24 +374,12 @@
     <div class="row g-4">
         {% for projet in projets %}
         <div class="col-md-4">
-            <div class="card card-custom">
-                <div class="card-body">
-                    <h3 class="card-title h5">{{ projet.title }}</h3>
-                    {% if projet.main_image %}
-                    <div class="card-media">
-                        <img src="{{ projet.main_image.url }}" alt="{{ projet.title }}">
-                    </div>
-                    {% endif %}
-                    <p class="card-text text-muted small">
-                        <a href="mailto:{{ projet.author_email }}">{{ projet.author_name }}</a>,
-                        {{ projet.author_profession }}
-                        <span class="mx-1">|</span>
-                        {{ projet.published_at|date:"d M Y" }}
-                    </p>
-                    <p class="card-text">{{ projet.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% if site_profile.is_default %}{% url 'projet_detail' projet.slug %}{% else %}/profil/{% profile_url_params site_profile %}/projets/{{ projet.slug }}/{% endif %}" class="btn btn-custom-primary btn-sm">Voir le projet</a>
-                </div>
-            </div>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_projet_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=projet.slug as detail_url %}
+            {% else %}
+                {% url 'projet_detail' slug=projet.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text="Voir le projet" %}
         </div>
         {% empty %}
         <div class="col-12">
@@ -441,26 +411,12 @@
     <div class="row g-4">
         {% for article in articles %}
         <div class="col-md-4">
-            <div class="card card-custom">
-                    <div class="card-body">
-                    <h3 class="card-title h5">{{ article.title }}</h3>
-                    {% if article.main_image %}
-                    <div class="card-media">
-                        <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
-                    </div>
-                    {% endif %}
-                    <p class="card-text text-muted small">
-                        <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
-                        {{ article.author_profession }}
-                        <span class="mx-1">|</span>
-                        {{ article.published_at|date:"d M Y" }}
-                    </p>
-
-                    <p class="card-text">{{ article.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% if site_profile.is_default %}{% url 'blogue_detail' article.slug %}{% else %}/profil/{% profile_url_params site_profile %}/blog/{{ article.slug }}/{% endif %}" class="btn btn-custom-primary btn-sm">Lire
-                        l'article</a>
-                </div>
-            </div>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_blogue_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=article.slug as detail_url %}
+            {% else %}
+                {% url 'blogue_detail' slug=article.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=article detail_url=detail_url button_text="Lire l'article" %}
         </div>
         {% empty %}
         <div class="col-12">
@@ -513,20 +469,12 @@
         <div class="row g-4">
             {% for service in services %}
             <div class="col-md-4">
-                <div class="card card-custom">
-                    <div class="card-body">
-                        <h3 class="card-title h5">{{ service.title }}</h3>
-                        <p class="card-text">{{ service.resume|striptags|truncatewords:20 }}</p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            {% if service.calendly_url %}
-                            <a href="{{ service.calendly_url }}" target="_blank"
-                                class="btn btn-custom-primary btn-sm">Prendre rendez-vous</a>
-                            {% endif %}
-                            <a href="{% if site_profile.is_default %}{% url 'service_detail' service.slug %}{% else %}/profil/{% profile_url_params site_profile %}/services/{{ service.slug }}/{% endif %}" class="btn btn-custom-outline btn-sm">En
-                                savoir plus</a>
-                        </div>
-                    </div>
-                </div>
+                {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                    {% url 'profile_service_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=service.slug as detail_url %}
+                {% else %}
+                    {% url 'service_detail' slug=service.slug as detail_url %}
+                {% endif %}
+                {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text="En savoir plus" show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text="Prendre rendez-vous" extra_button_target="_blank" show_image=False show_author=False show_date=False %}
             </div>
             {% empty %}
             <div class="col-12">

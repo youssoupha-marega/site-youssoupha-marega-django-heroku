@@ -3,11 +3,63 @@ from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField
 
 
+class SiteProfileManager(models.Manager):
+	"""Custom manager for SiteProfile with optimized queries."""
+	
+	def get_published_with_content(self):
+		"""
+		Get published profiles with all related content prefetched.
+		
+		Returns:
+			QuerySet: Optimized queryset with prefetch_related for all M2M relationships.
+		"""
+		return self.prefetch_related(
+			'sections__items',
+			'featured_projects', 'published_projects',
+			'featured_articles', 'published_articles',
+			'featured_services', 'published_services'
+		).filter(is_published=True)
+	
+	def get_default_profile(self):
+		"""
+		Get the default profile (is_default=True) with all content.
+		
+		Returns:
+			SiteProfile or None: The default profile if exists, None otherwise.
+		"""
+		return self.get_published_with_content().filter(is_default=True).first()
+	
+	def get_by_slug_with_content(self, slug):
+		"""
+		Get a specific profile by slug with all content prefetched.
+		
+		Args:
+			slug (str): The profile slug.
+			
+		Returns:
+			SiteProfile: The profile instance.
+			
+		Raises:
+			SiteProfile.DoesNotExist: If no profile with this slug exists.
+		"""
+		return self.get_published_with_content().get(slug=slug)
+
+
 class SiteProfile(models.Model):
-	"""Model to hold the public profile / account information shown on the site."""
+	"""
+	Model to hold the public profile / account information shown on the site.
+	
+	Attributes:
+		is_default: If True, this profile is displayed at the root URL (/).
+		is_published: If True, this profile is publicly visible.
+		slug: Auto-generated URL slug (format: firstname-lastname-profession).
+	"""
 	is_default = models.BooleanField(default=False, verbose_name=_("Profil par défaut (racine /)"))
 	is_published = models.BooleanField(default=False, verbose_name=_("Publier ce profil"))
 	slug = models.SlugField(max_length=255, unique=True, verbose_name=_("Slug URL"), help_text=_("URL unique pour ce profil (ex: youssoupha-marega-data-scientist)"))
+	
+	objects = SiteProfileManager()
+	
 	first_name = models.CharField(max_length=150, verbose_name=_("Prénom"))
 	last_name = models.CharField(max_length=150, verbose_name=_("Nom"))
 	location = models.CharField(max_length=255, blank=True, verbose_name=_("Localisation"))

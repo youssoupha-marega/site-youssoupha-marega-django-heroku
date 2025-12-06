@@ -58,3 +58,25 @@ def profile_url_params(profile):
     nom_slug = slugify(f"{profile.first_name}-{profile.last_name}")
     profession_slug = slugify(profile.profession) if profile.profession else "profil"
     return f"nom={nom_slug}&profession={profession_slug}"
+
+
+@register.filter(name='profile_nom_slug')
+def profile_nom_slug(profile):
+    """
+    Génère le slug du nom complet pour les URLs de profil.
+    Ex: first_name='Yama', last_name='Sakho' -> 'yama-sakho'
+    """
+    if not profile:
+        return ""
+    return slugify(f"{profile.first_name}-{profile.last_name}")
+
+
+@register.filter(name='profile_profession_slug')
+def profile_profession_slug(profile):
+    """
+    Génère le slug de la profession pour les URLs de profil.
+    Ex: profession='Data Analyst' -> 'data-analyst'
+    """
+    if not profile or not profile.profession:
+        return "profil"
+    return slugify(profile.profession)

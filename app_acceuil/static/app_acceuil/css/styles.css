@@ -207,31 +207,91 @@ footer a:hover {
     }
 }
 
-/* Card media: fixed aspect ratio with cover-fit image for consistent proportions */
+/* Card media: responsive with adaptive sizing for full image visibility */
 .card-media {
     width: 100%;
-    aspect-ratio: 16/9;
+    max-height: 400px;
+    min-height: 180px;
     overflow: hidden;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-    background: #ffffff; /* match Accueil card background */
-    border: 1px solid #e9ecef; /* match Accueil card border */
+    background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card-media img {
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 400px;
     object-fit: contain; /* show full image without cropping */
+    object-position: center center;
     display: block;
-    transform-origin: center center;
-    object-position: center center; /* center image like Accueil */
-    background-color: transparent; /* ensure no background bleed */
+    background-color: transparent;
+    transition: transform 0.3s ease;
 }
 
-@media (max-width: 576px) {
+/* Skeleton loading animation */
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Hover effect: slight zoom on image */
+.card-custom:hover .card-media img {
+    transform: scale(1.05);
+}
+
+/* Tablet: slightly taller ratio */
+@media (max-width: 992px) {
+    .card-media {
+        aspect-ratio: 16/10;
+        max-height: 350px;
+        min-height: 160px;
+    }
+    
+    .card-media img {
+        max-height: 350px;
+    }
+}
+
+/* Mobile: square-ish ratio for better fit */
+@media (max-width: 768px) {
     .card-media {
         aspect-ratio: 4/3;
+        max-height: 280px;
+        min-height: 140px;
     }
+    
+    .card-media img {
+        max-height: 280px;
+    }
+}
+
+/* Variant: Panoramic images */
+.card-media.panorama {
+    aspect-ratio: 21/9;
+    max-height: 300px;
+}
+
+/* Variant: Square images (logos, portraits) */
+.card-media.square {
+    aspect-ratio: 1/1;
+    max-height: 300px;
+}
+
+/* Variant: Portrait images */
+.card-media.portrait {
+    aspect-ratio: 3/4;
+    max-height: 350px;
 }
 
 /* Logo-style small image used inside cards (compact) */

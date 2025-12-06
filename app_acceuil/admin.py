@@ -5,31 +5,7 @@ from django import forms
 from django.forms import inlineformset_factory
 from ckeditor.widgets import CKEditorWidget
 
-from .models import SiteProfile, Education, Experience, Section, SectionItem
-
-
-class EducationInline(admin.TabularInline):
-	model = Education
-	extra = 1
-	fields = ("title", "institution", "date", "icon", "order")
-	readonly_fields = ("icon_preview",)
-
-	def icon_preview(self, obj):
-		if obj and obj.icon:
-			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
-		return "-"
-
-
-class ExperienceInline(admin.TabularInline):
-	model = Experience
-	extra = 1
-	fields = ("title", "company", "company_url", "date", "icon", "order")
-	readonly_fields = ("icon_preview",)
-
-	def icon_preview(self, obj):
-		if obj and obj.icon:
-			return mark_safe(f"<img src='{obj.icon.url}' style='max-height:48px;' />")
-		return "-"
+from .models import SiteProfile, Section, SectionItem
 
 
 class SectionItemForm(forms.ModelForm):

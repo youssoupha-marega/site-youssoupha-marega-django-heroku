@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
@@ -15,24 +16,12 @@
     <div class="row g-3 g-md-4">
         {% for article in articles %}
         <div class="col-md-4">
-            <div class="card card-custom">
-                <div class="card-body">
-                    <h3 class="card-title h5 mb-2">{{ article.title }}</h3>
-                    {% if article.main_image %}
-                    <div class="card-media">
-                        <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
-                    </div>
-                    {% endif %}
-                    <p class="card-text text-muted small mb-2">
-                        <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
-                        {{ article.author_profession }}
-                        <span class="mx-1">|</span>
-                        {{ article.published_at|date:"d M Y" }}
-                    </p>
-                    <p class="card-text mb-3">{{ article.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% url 'blogue_detail' article.slug %}" class="btn btn-custom-primary mt-2">Lire l'article</a>
-                </div>
-            </div>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_blogue_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=article.slug as detail_url %}
+            {% else %}
+                {% url 'blogue_detail' slug=article.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=article detail_url=detail_url button_text="Lire l'article" %}
         </div>
         {% empty %}
         <div class="col-12">

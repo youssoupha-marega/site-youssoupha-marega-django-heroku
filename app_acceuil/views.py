@@ -4,108 +4,58 @@ from django.conf import settings
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib import messages
 
-from app_projet.models import Project
-from app_blog.models import BlogPost
-from app_service.models import Service
 from .models import SiteProfile
+from .services import ProfileService
 
 
 def acceuil(request):
-    """Vue pour le profil par défaut à la racine /"""
-    # Charger le profil par défaut (is_default=True)
-    site_profile = SiteProfile.objects.prefetch_related(
-        'educations', 'experiences', 'sections__items',
-        'featured_projects', 'published_projects',
-        'featured_articles', 'published_articles',
-        'featured_services', 'published_services'
-    ).filter(is_default=True, is_published=True).first()
+    """
+    Vue pour le profil par défaut à la racine /.
     
-    if not site_profile:
-        # Fallback: utiliser le premier profil publié si aucun profil par défaut
-        site_profile = SiteProfile.objects.prefetch_related(
-            'educations', 'experiences', 'sections__items',
-            'featured_projects', 'published_projects',
-            'featured_articles', 'published_articles',
-            'featured_services', 'published_services'
-        ).filter(is_published=True).first()
+    Récupère le profil par défaut et construit le contexte avec le contenu
+    mis en avant en utilisant le service ProfileService.
     
-    # Récupérer les projets mis en avant pour ce profil
-    if site_profile and site_profile.featured_projects.exists():
-        projets_featured = site_profile.featured_projects.filter(is_published=True)
-    else:
-        projets_featured = Project.objects.filter(featured=True, is_published=True)
-    
-    # Récupérer les articles mis en avant pour ce profil
-    if site_profile and site_profile.featured_articles.exists():
-        articles_recents = site_profile.featured_articles.filter(is_published=True)
-    else:
-        articles_recents = BlogPost.objects.filter(is_published=True, featured=True)
-    
-    # Récupérer les services mis en avant pour ce profil
-    if site_profile and site_profile.featured_services.exists():
-        services = site_profile.featured_services.filter(is_published=True)
-    else:
-        services = Service.objects.filter(is_published=True, featured=True)
-    
-    context = {
-        'projets': projets_featured,
-        'articles': articles_recents,
-        'services': services,
-        'site_profile': site_profile,
-    }
-    
+    Args:
+        request: L'objet HttpRequest.
+        
+    Returns:
+        HttpResponse avec le rendu du template acceuil.html.
+    """
+    site_profile = SiteProfile.objects.get_default_profile()
+    context = ProfileService.build_profile_context(site_profile)
     return render(request, 'app_acceuil/acceuil.html', context)
 
 
 def profile_home(request, nom=None, profession=None):
-    """Vue pour un profil spécifique avec paramètres dans le chemin"""
-    from django.utils.text import slugify
+    """
+    Vue pour un profil spécifique avec paramètres dans le chemin.
     
+    Construit le slug à partir des paramètres nom et profession, récupère
+    le profil correspondant et construit le contexte avec le service.
+    
+    Args:
+        request: L'objet HttpRequest.
+        nom: Le nom du profil (extrait de l'URL).
+        profession: La profession du profil (extrait de l'URL).
+        
+    Returns:
+        HttpResponse avec le rendu du template acceuil.html, ou redirect si paramètres manquants.
+    """
     # Construire le slug du profil à partir des paramètres
     profile_slug = f"{nom}-{profession}" if nom and profession else ""
     
     if not profile_slug:
         # Si pas de paramètres, rediriger vers la racine
-        from django.shortcuts import redirect
         return redirect('acceuil')
     
-    # Charger le profil spécifique par son slug
+    # Charger le profil spécifique par son slug avec le manager optimisé
     site_profile = get_object_or_404(
-        SiteProfile.objects.prefetch_related(
-            'educations', 'experiences', 'sections__items',
-            'featured_projects', 'published_projects',
-            'featured_articles', 'published_articles',
-            'featured_services', 'published_services'
-        ),
-        slug=profile_slug,
-        is_published=True
+        SiteProfile.objects.get_published_with_content(),
+        slug=profile_slug
     )
     
-    # Récupérer les projets mis en avant pour ce profil
-    if site_profile.featured_projects.exists():
-        projets_featured = site_profile.featured_projects.filter(is_published=True)
-    else:
-        projets_featured = site_profile.published_projects.filter(is_published=True)[:3]
-    
-    # Récupérer les articles mis en avant pour ce profil
-    if site_profile.featured_articles.exists():
-        articles_recents = site_profile.featured_articles.filter(is_published=True)
-    else:
-        articles_recents = site_profile.published_articles.filter(is_published=True)[:3]
-    
-    # Récupérer les services mis en avant pour ce profil
-    if site_profile.featured_services.exists():
-        services = site_profile.featured_services.filter(is_published=True)
-    else:
-        services = site_profile.published_services.filter(is_published=True)[:3]
-    
-    context = {
-        'projets': projets_featured,
-        'articles': articles_recents,
-        'services': services,
-        'site_profile': site_profile,
-    }
-    
+    # Construire le contexte avec le service
+    context = ProfileService.build_profile_context(site_profile)
     return render(request, 'app_acceuil/acceuil.html', context)
 
 def formation(request):

@@ -1,25 +1,45 @@
 from django.db import models
-from django.utils.text import slugify
+from django.urls import reverse
+from app_acceuil.base_models import PublishableContent, PublishableContentManager
 
-class Service(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Titre")
-    slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug")
-    resume = models.TextField(verbose_name="Résumé")
-    content = models.TextField(verbose_name="Description complète")
-    calendly_url = models.URLField(max_length=500, blank=True, verbose_name="Lien Calendly")
-    is_published = models.BooleanField(default=True, verbose_name="Est publié")
-    featured = models.BooleanField(default=False, verbose_name="Service mis en avant")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
 
-    class Meta:
+class Service(PublishableContent):
+    """
+    Modèle pour les services proposés.
+    
+    Hérite de PublishableContent pour les champs communs (title, slug, resume,
+    is_published, featured, author_*, dates, etc.).
+    
+    Ajoute uniquement les champs spécifiques aux services.
+    """
+    
+    # Champs spécifiques aux services
+    content = models.TextField(verbose_name="Description complète du service")
+    calendly_url = models.URLField(
+        max_length=500, 
+        blank=True, 
+        verbose_name="Lien Calendly pour réservation"
+    )
+    price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        blank=True, 
+        null=True,
+        verbose_name="Prix (optionnel)"
+    )
+    duration = models.CharField(
+        max_length=100, 
+        blank=True,
+        verbose_name="Durée (ex: '1 heure', '2 jours')"
+    )
+    
+    objects = PublishableContentManager()
+
+    def get_absolute_url(self):
+        """Retourne l'URL de la page de détail du service."""
+        return reverse('service_detail', kwargs={'slug': self.slug})
+
+    class Meta(PublishableContent.Meta):
         verbose_name = "Service"
         verbose_name_plural = "Services"
-        ordering = ['created_at']
-
-    def __str__(self):
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
+        # Hérite ordering = ['-created_at'] de PublishableContent

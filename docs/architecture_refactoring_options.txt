@@ -1,0 +1,131 @@
+"""
+Exemple de refactoring de app_projet pour utiliser les classes de base.
+
+AVANT (app_projet/models.py) - Code dupliqué :
+-----------------------------------------------
+class Project(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    resume = models.TextField()
+    content = RichTextUploadingField()
+    is_published = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
+    author_name = models.CharField(max_length=100, default="Youssoupha Marega")
+    author_email = models.EmailField(default="contact@youssouphamarega.com")
+    published_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    # ... 15+ lignes de champs répétés
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+
+APRÈS - Utilise PublishableContent :
+-------------------------------------
+from app_acceuil.base_models import PublishableContent, PublishableContentManager
+from ckeditor_uploader.fields import RichTextUploadingField
+
+class Project(PublishableContent):
+    '''Projet portfolio - hérite de PublishableContent pour éviter la duplication.'''
+    
+    # Seuls les champs SPÉCIFIQUES aux projets
+    content = RichTextUploadingField(verbose_name="Contenu détaillé")
+    main_image = models.ImageField(
+        upload_to='projets/', 
+        blank=True, 
+        null=True, 
+        verbose_name="Image principale"
+    )
+    github_url = models.URLField(blank=True, verbose_name="Lien GitHub")
+    demo_url = models.URLField(blank=True, verbose_name="Lien démo")
+    
+    objects = PublishableContentManager()
+    
+    class Meta(PublishableContent.Meta):
+        verbose_name = "Projet"
+        verbose_name_plural = "Projets"
+
+
+VIEWS REFACTORISÉES (app_projet/views.py) :
+--------------------------------------------
+from app_acceuil.base_views import ProfileBasedListView, ProfileBasedDetailView
+from .models import Project
+
+class ProjectListView(ProfileBasedListView):
+    model = Project
+    template_name = 'app_projet/list.html'
+    context_object_name = 'projets'
+    profile_featured_attr = 'featured_projects'
+
+class ProjectDetailView(ProfileBasedDetailView):
+    model = Project
+    template_name = 'app_projet/detail.html'
+    context_object_name = 'projet'
+
+# Avant : 50+ lignes par vue
+# Après : 5 lignes par vue !
+
+
+URLS SIMPLIFIÉES (app_projet/urls.py) :
+----------------------------------------
+from django.urls import path
+from .views import ProjectListView, ProjectDetailView
+
+urlpatterns = [
+    path('', ProjectListView.as_view(), name='projet_list'),
+    path('<slug:slug>/', ProjectDetailView.as_view(), name='projet_detail'),
+]
+
+
+BÉNÉFICES :
+-----------
+✅ 70% moins de code dupliqué
+✅ Modifications centralisées (1 endroit au lieu de 3)
+✅ Tests partagés (test une fois, bénéficie partout)
+✅ Nouvelles fonctionnalités automatiques (ajouter un champ dans PublishableContent = disponible partout)
+✅ Apps restent séparées (réutilisables indépendamment)
+✅ Migration progressive possible (refactorer une app à la fois)
+
+
+ALTERNATIVE : App unifiée "portfolio_content"
+----------------------------------------------
+Si vraiment vous voulez tout fusionner :
+
+class PortfolioItem(models.Model):
+    CONTENT_TYPES = (
+        ('project', 'Projet'),
+        ('blog', 'Article de blog'),
+        ('service', 'Service'),
+    )
+    
+    content_type = models.CharField(max_length=20, choices=CONTENT_TYPES)
+    title = models.CharField(max_length=200)
+    # ... tous les champs de tous les types
+    
+    # Champs optionnels selon le type
+    github_url = models.URLField(blank=True)  # Seulement pour projets
+    calendly_url = models.URLField(blank=True)  # Seulement pour services
+    
+    class Meta:
+        verbose_name_plural = "Contenus Portfolio"
+
+⚠️ INCONVÉNIENTS de l'app unifiée :
+- Beaucoup de champs null=True, blank=True
+- Validation complexe (certains champs requis selon content_type)
+- Admin confus (tous les champs visibles même si non pertinents)
+- Performances (index sur plein de colonnes nulles)
+
+
+CONCLUSION :
+------------
+👉 Je recommande l'APPROCHE HYBRIDE (apps séparées + classes de base)
+
+Raisons :
+1. Meilleur des deux mondes
+2. Migration progressive sans casser le code existant
+3. Conserve la clarté conceptuelle (Project != BlogPost)
+4. Élimine 70% de la duplication quand même
+5. Facilite les tests et la maintenance
+"""

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
@@ -15,33 +16,17 @@
     <div class="row g-3 g-md-4">
         {% for service in services %}
         <div class="col-md-4">
-            <div class="card card-custom">
-                <div class="card-body">
-                    <h2 class="card-title h4 mb-3">{{ service.title }}</h2>
-                    <p class="card-text mb-4">{{ service.resume|striptags }}</p>
-
-                    <div class="d-flex flex-column gap-2">
-                        {% if service.calendly_url %}
-                        <a href="{{ service.calendly_url }}" target="_blank" class="btn btn-custom-primary">
-                            📅 Prendre rendez-vous
-                        </a>
-                        {% endif %}
-                           {% if site_profile and site_profile.email %}
-                           <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" class="btn btn-outline-primary">✉️ Envoyer un mail</a>
-                           {% else %}
-                           <a href="{% url 'contact' %}" class="btn btn-outline-primary">✉️ Nous contacter</a>
-                           {% endif %}
-                        <a href="{% url 'service_detail' service.slug %}" class="btn btn-custom-outline">
-                            En savoir plus
-                        </a>
-                    </div>
-                </div>
-            </div>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_service_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=service.slug as detail_url %}
+            {% else %}
+                {% url 'service_detail' slug=service.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text="En savoir plus" show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text="📅 Prendre rendez-vous" extra_button_target="_blank" show_image=False show_author=False show_date=False %}
         </div>
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info">
-                Aucun service disponible pour le moment.
+                Aucun service disponible pour le moment. Revenez bientôt !
             </div>
         </div>
         {% endfor %}
