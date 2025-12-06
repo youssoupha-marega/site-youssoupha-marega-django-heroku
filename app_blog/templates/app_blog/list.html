@@ -3,30 +3,34 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <h1 class="section-title mb-4">Articles de blog</h1>
+<div class="container-fluid px-3 mt-4">
+    <h1 class="section-title mb-4">{% if site_profile.blog_page_title %}{{ site_profile.blog_page_title }}{% else %}Articles de blog{% endif %}</h1>
+    
+    {% if site_profile.blog_page_intro %}
+    <div class="section-intro mb-4">
+        {{ site_profile.blog_page_intro|safe }}
+    </div>
+    {% endif %}
 
-    <div class="row g-4">
+    <div class="row g-3 g-md-4">
         {% for article in articles %}
         <div class="col-md-4">
             <div class="card card-custom">
                 <div class="card-body">
-                    <div class="card-title-row">
-                        {% if article.main_image %}
-                        <div class="card-logo">
-                            <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
-                        </div>
-                        {% endif %}
-                        <h3 class="card-title h5">{{ article.title }}</h3>
+                    <h3 class="card-title h5 mb-2">{{ article.title }}</h3>
+                    {% if article.main_image %}
+                    <div class="card-media">
+                        <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
                     </div>
-                    <p class="card-text text-muted small">
+                    {% endif %}
+                    <p class="card-text text-muted small mb-2">
                         <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
                         {{ article.author_profession }}
                         <span class="mx-1">|</span>
                         {{ article.published_at|date:"d M Y" }}
                     </p>
-                    <p class="card-text">{{ article.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% url 'blogue_detail' article.slug %}" class="btn btn-custom-primary">Lire l'article</a>
+                    <p class="card-text mb-3">{{ article.resume|striptags|truncatewords:20 }}</p>
+                    <a href="{% url 'blogue_detail' article.slug %}" class="btn btn-custom-primary mt-2">Lire l'article</a>
                 </div>
             </div>
         </div>

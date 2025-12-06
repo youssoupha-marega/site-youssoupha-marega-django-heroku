@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid px-3 mt-4">
     <article>
         <!-- En-tête de l'article -->
         <div class="mb-4">
@@ -23,9 +23,8 @@
 
         <!-- Image principale -->
         {% if article.main_image %}
-        <div class="mb-4">
-            <img src="{{ article.main_image.url }}" class="img-fluid rounded shadow" alt="{{ article.title }}"
-                style="max-width: 100%;">
+        <div class="mb-4 card-media">
+            <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
         </div>
         {% endif %}
 

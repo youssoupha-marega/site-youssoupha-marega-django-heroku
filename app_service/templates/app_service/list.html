@@ -3,10 +3,16 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <h1 class="section-title mb-4">Services offerts</h1>
+<div class="container-fluid px-3 mt-4">
+    <h1 class="section-title mb-4">{% if site_profile.services_page_title %}{{ site_profile.services_page_title }}{% else %}Services offerts{% endif %}</h1>
+    
+    {% if site_profile.services_page_intro %}
+    <div class="section-intro mb-4">
+        {{ site_profile.services_page_intro|safe }}
+    </div>
+    {% endif %}
 
-    <div class="row g-4">
+    <div class="row g-3 g-md-4">
         {% for service in services %}
         <div class="col-md-4">
             <div class="card card-custom">

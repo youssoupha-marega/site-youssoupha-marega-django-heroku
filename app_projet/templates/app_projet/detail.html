@@ -4,7 +4,7 @@
 {% block content %}
 
 <!-- Titre du projet -->
-<h1 class="mb-4">{{ projet.title }}</h1>
+<h1 class="section-title mb-4">{{ projet.title }}</h1>
 
 <!-- Métadonnées du projet -->
 <div class="mb-3">
@@ -20,9 +20,8 @@
 
 <!-- Image principale -->
 {% if projet.main_image %}
-<div class="mb-4">
-    <img src="{{ projet.main_image.url }}" class="img-fluid rounded shadow" alt="{{ projet.title }}"
-        style="max-width: 100%;">
+<div class="mb-4 card-media">
+    <img src="{{ projet.main_image.url }}" alt="{{ projet.title }}">
 </div>
 {% endif %}
 

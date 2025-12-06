@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
@@ -66,7 +67,14 @@
     .edu-institution {
         color: #6c757d;
         font-size: 0.9rem;
+        margin-top: 4px;
     }
+    /* Title/date wrap behavior: date moves to next line first */
+    .edu-title-wrap { flex-wrap: wrap; }
+    .edu-title { flex: 1 1 auto; min-width: 0; }
+    .edu-meta { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
+    /* Match experience date style (inside bold title) */
+    .edu-year { font-weight: 600; }
     .edu-icon img {
         width: 90%;
         height: 90%;
@@ -74,6 +82,44 @@
         display: block;
         border-radius: 6px;
     }
+    .btn-eye {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width:16px;
+        height:16px;
+        padding:0;
+        border:none;
+        outline:none;
+        background:transparent;
+        box-shadow:none;
+        border-radius:0;
+        cursor:pointer;
+        color:#6c757d; /* match muted */
+        line-height:1;
+    }
+    /* Exposant discret pour l'œil */
+    .btn-eye-inline { 
+        margin-left: 4px; 
+        vertical-align: super; 
+        position: relative; 
+        top: -2px; /* léger décalage vers le haut */
+    }
+    .btn-eye-inline svg { width: 14px; height: 14px; }
+    .edu-details {
+        background:#ffffff;
+        border:1px solid #e9ecef;
+        padding:10px;
+        border-radius:6px;
+    }
+    /* Removed strike style on meta: years are never struck */
+    /* Default: details cachés -> montrer OEIL BARRÉ */
+    .btn-eye .icon-eye { display:none }
+    .btn-eye .icon-eye-slash { display:inline-block }
+    /* Actif (détails affichés) -> montrer OEIL SANS BARRE */
+    .btn-eye.active .icon-eye { display:inline-block }
+    .btn-eye.active .icon-eye-slash { display:none }
+    /* No asterisk anymore */
     .experience-item {
         display: flex;
         gap: 12px;
@@ -82,6 +128,24 @@
     }
 
     /* experience images share the same styling via .edu-icon img */
+    /* Card media (image) occupies ~40% of card height */
+    .card-media {
+        width: 100%;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+        margin: 10px 0;
+        border-radius: 8px;
+        background: #ffffff; /* match list pages */
+        border: 1px solid #e9ecef;
+    }
+    .card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* show full image without cropping */
+        object-position: center center; /* center image for consistency */
+        display: block;
+        background-color: transparent;
+    }
 </style>
 
 <!-- ============================================ -->
@@ -137,16 +201,30 @@
                 </a>
                 {% endif %}
             </div>
+
+            {# Bio déplacée à gauche si configurée #}
+            {% if site_profile and site_profile.bio and site_profile.bio_position == 'left' %}
+            <div class="text-start mt-3 px-2">
+                {% if site_profile.bio_show_title %}
+                <h3 class="mb-2">{{ site_profile.bio_title|default:"Profil" }}</h3>
+                {% endif %}
+                <div class="mb-2">{{ site_profile.bio|safe }}</div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Colonne droite : Profil + grille -->
         <div class="col-md-8">
 
-            <h1 class="mb-3">Profil</h1>
+            {% if site_profile and site_profile.bio_position != 'left' %}
+                {% if site_profile and site_profile.bio_show_title %}
+                <h1 class="mb-3">{{ site_profile.bio_title|default:"Profil" }}</h1>
+                {% endif %}
+            {% endif %}
 
-            {% if site_profile and site_profile.bio %}
+            {% if site_profile and site_profile.bio and site_profile.bio_position != 'left' %}
             <div class="mb-2">{{ site_profile.bio|safe }}</div>
-            {% else %}
+            {% elif not site_profile or not site_profile.bio %}
             <p class="mb-2">
                 Je suis data scientist spécialisé en modélisation statistique,
                 prévision de séries temporelles et MLOps.
@@ -164,89 +242,7 @@
             <div class="grid-wrapper">
                 <div class="row g-2">
 
-                    <!-- Formation -->
-                    <div class="col-md-6">
-                        <div class="portfolio-card h-100">
-                            <h3>Formation</h3>
-                                <div class="education-list">
-                                        {% if site_profile and site_profile.educations.exists %}
-                                        {% for edu in site_profile.educations.all %}
-                                            <div class="education-item">
-                                                {% if edu.icon %}
-                                                <div class="edu-icon">
-                                                    <img src="{{ edu.icon.url }}" alt="{{ edu.title }}" class="edu-img">
-                                                </div>
-                                                {% endif %}
-                                                <div>
-                                                    <div class="edu-title">{{ edu.title }}{% if edu.date %}, <span class="text-muted">{{ edu.date }}</span>{% endif %}</div>
-                                                    {% if edu.institution %}
-                                                    <div class="edu-institution">{{ edu.institution }}</div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <!-- Static fallback entries (no icon placeholders) -->
-                                        <div class="education-item">
-                                            <div>
-                                                <div class="edu-title">Maitrise en statistique, <span class="text-muted">2023</span></div>
-                                                <div class="edu-institution">Université du Québec à Montréal</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="education-item">
-                                            <div>
-                                                <div class="edu-title">Baccalauréat en mathématique et économie, <span class="text-muted">2019</span></div>
-                                                <div class="edu-institution">Université Claude Bernard Lyon 1</div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                        </div>
-                    </div>
-
-                    <!-- Expérience -->
-                    <div class="col-md-6">
-                            <div class="portfolio-card h-100">
-                                <h3>Expérience</h3>
-                                <div class="experience-list">
-                                    {% if site_profile and site_profile.experiences.exists %}
-                                        {% for exp in site_profile.experiences.all %}
-                                            <div class="experience-item">
-                                                {% if exp.icon %}
-                                                <div class="edu-icon">
-                                                    <img src="{{ exp.icon.url }}" alt="{{ exp.title }}" class="exp-img">
-                                                </div>
-                                                {% endif %}
-                                                <div>
-                                                    <div class="edu-title">{{ exp.title }}{% if exp.date %}, <span class="text-muted">{{ exp.date }}</span>{% endif %}</div>
-                                                    {% if exp.company %}
-                                                    <div class="edu-institution">{{ exp.company }}</div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <!-- Static fallback entries (no icon placeholders) -->
-                                        <div class="experience-item">
-                                            <div>
-                                                <div class="edu-title">Scientifique de données, <span class="text-muted">2023-2026</span></div>
-                                                <div class="edu-institution">Nordikeau</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="experience-item">
-                                            <div>
-                                                <div class="edu-title">Analyste de données, <span class="text-muted">2022-2023</span></div>
-                                                <div class="edu-institution">STATQAM</div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                    </div>
-
-                    <!-- Sections dynamiques (Compétences, Stack, Intérêts, Valeurs, etc.) -->
+                    <!-- Sections dynamiques (Toutes les sections : Formation, Expérience, Compétences, Stack, etc.) -->
                     {% if site_profile and site_profile.sections.exists %}
                         {% for section in site_profile.sections.all %}
                             {% if section.is_active %}
@@ -262,9 +258,36 @@
                                                     </div>
                                                     {% endif %}
                                                     <div>
-                                                        <div class="edu-title">{{ item.title }}</div>
+                                                        <div class="edu-title">{{ item.title }}{% if item.date %}, <span class="text-muted edu-year">{{ item.date }}</span>{% endif %}
+                                                            {% if item.details %}
+                                                                <button class="btn-eye btn-eye-inline" data-target="#section-item-details-{{ item.id }}" aria-expanded="false" title="Voir les détails">
+                                                                    <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
+                                                                        <circle cx="8" cy="8" r="3"/>
+                                                                    </svg>
+                                                                    <svg class="icon-eye-slash" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
+                                                                        <circle cx="8" cy="8" r="3"/>
+                                                                        <path d="M2 2l12 12"/>
+                                                                    </svg>
+                                                                </button>
+                                                            {% endif %}
+                                                        </div>
                                                         {% if item.subtitle %}
-                                                            <div class="edu-institution">{{ item.subtitle }}</div>
+                                                            <div class="edu-institution">
+                                                                {% if item.url %}
+                                                                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+                                                                        {{ item.subtitle }}
+                                                                    </a>
+                                                                {% else %}
+                                                                    {{ item.subtitle }}
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if item.details %}
+                                                            <div id="section-item-details-{{ item.id }}" class="edu-details mt-2" style="display:none;">
+                                                                {{ item.details|safe }}
+                                                            </div>
                                                         {% endif %}
                                                     </div>
                                                 </div>
@@ -357,32 +380,34 @@
     <!-- ============================================ -->
     <section id="projets" class="container-fluid px-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">Pour les projets</h2>
-            <a href="{% url 'projet_list' %}" class="view-all-link">Voir tous les projets →</a>
+            <h2 class="section-title mb-0">{% if site_profile.projects_home_title %}{{ site_profile.projects_home_title }}{% else %}Projets mis en avant{% endif %}</h2>
+            <a href="{% if site_profile.is_default %}{% url 'projet_list' %}{% else %}/profil/{% profile_url_params site_profile %}/projets/{% endif %}" class="view-all-link">{% if site_profile.projects_view_all_text %}{{ site_profile.projects_view_all_text }}{% else %}Voir tous les projets{% endif %} →</a>
         </div>
+        {% if site_profile.projects_home_intro %}
+        <div class="section-intro mb-4">
+            {{ site_profile.projects_home_intro|safe }}
+        </div>
+        {% endif %}
 
     <div class="row g-4">
         {% for projet in projets %}
         <div class="col-md-4">
             <div class="card card-custom">
                 <div class="card-body">
-                    <div class="card-title-row">
-                        {% if projet.main_image %}
-                        <div class="card-logo">
-                            <img src="{{ projet.main_image.url }}" alt="{{ projet.title }}">
-                        </div>
-                        {% endif %}
-                        <h3 class="card-title h5">{{ projet.title }}</h3>
+                    <h3 class="card-title h5">{{ projet.title }}</h3>
+                    {% if projet.main_image %}
+                    <div class="card-media">
+                        <img src="{{ projet.main_image.url }}" alt="{{ projet.title }}">
                     </div>
+                    {% endif %}
                     <p class="card-text text-muted small">
                         <a href="mailto:{{ projet.author_email }}">{{ projet.author_name }}</a>,
                         {{ projet.author_profession }}
                         <span class="mx-1">|</span>
                         {{ projet.published_at|date:"d M Y" }}
                     </p>
-                    {# removed large card-media: using compact logo instead #}
                     <p class="card-text">{{ projet.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% url 'projet_detail' projet.slug %}" class="btn btn-custom-primary btn-sm">Voir le projet</a>
+                    <a href="{% if site_profile.is_default %}{% url 'projet_detail' projet.slug %}{% else %}/profil/{% profile_url_params site_profile %}/projets/{{ projet.slug }}/{% endif %}" class="btn btn-custom-primary btn-sm">Voir le projet</a>
                 </div>
             </div>
         </div>
@@ -404,23 +429,26 @@
 
     <section id="Bloques" class="container-fluid px-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">Articles</h2>
-            <a href="{% url 'blogue_list' %}" class="view-all-link">Voir tous les articles →</a>
+            <h2 class="section-title mb-0">{% if site_profile.blog_home_title %}{{ site_profile.blog_home_title }}{% else %}Articles de blog mis en avant{% endif %}</h2>
+            <a href="{% if site_profile.is_default %}{% url 'blogue_list' %}{% else %}/profil/{% profile_url_params site_profile %}/blog/{% endif %}" class="view-all-link">{% if site_profile.blog_view_all_text %}{{ site_profile.blog_view_all_text }}{% else %}Voir tous les articles{% endif %} →</a>
         </div>
+        {% if site_profile.blog_home_intro %}
+        <div class="section-intro mb-4">
+            {{ site_profile.blog_home_intro|safe }}
+        </div>
+        {% endif %}
 
     <div class="row g-4">
         {% for article in articles %}
         <div class="col-md-4">
             <div class="card card-custom">
                     <div class="card-body">
-                    <div class="card-title-row">
-                        {% if article.main_image %}
-                        <div class="card-logo">
-                            <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
-                        </div>
-                        {% endif %}
-                        <h3 class="card-title h5">{{ article.title }}</h3>
+                    <h3 class="card-title h5">{{ article.title }}</h3>
+                    {% if article.main_image %}
+                    <div class="card-media">
+                        <img src="{{ article.main_image.url }}" alt="{{ article.title }}">
                     </div>
+                    {% endif %}
                     <p class="card-text text-muted small">
                         <a href="mailto:{{ article.author_email }}">{{ article.author_name }}</a>,
                         {{ article.author_profession }}
@@ -428,9 +456,8 @@
                         {{ article.published_at|date:"d M Y" }}
                     </p>
 
-                    {# removed large card-media: using compact logo instead #}
                     <p class="card-text">{{ article.resume|striptags|truncatewords:20 }}</p>
-                    <a href="{% url 'blogue_detail' article.slug %}" class="btn btn-custom-primary btn-sm">Lire
+                    <a href="{% if site_profile.is_default %}{% url 'blogue_detail' article.slug %}{% else %}/profil/{% profile_url_params site_profile %}/blog/{{ article.slug }}/{% endif %}" class="btn btn-custom-primary btn-sm">Lire
                         l'article</a>
                 </div>
             </div>
@@ -445,15 +472,43 @@
 
     <!-- Séparateur gris -->
     <div class="section-separator"></div>
+    
+    <script>
+    // Toggle details for education items
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.btn-eye').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                var target = btn.getAttribute('data-target');
+                if(!target) return;
+                var el = document.querySelector(target);
+                if(!el) return;
+                var hidden = (getComputedStyle(el).display === 'none');
+                el.style.display = hidden ? 'block' : 'none';
+                btn.setAttribute('aria-expanded', hidden ? 'true' : 'false');
+                // Only the eye toggles: active when details are visible
+                if(hidden){
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+    });
+    </script>
 
     <!-- ============================================ -->
     <!-- SECTION 5 : SERVICES OFFERTS -->
     <!-- ============================================ -->
     <section id="services" class="container-fluid px-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">Services</h2>
-            <a href="{% url 'service_list' %}" class="view-all-link">Voir tous les services →</a>
+            <h2 class="section-title mb-0">{% if site_profile.services_home_title %}{{ site_profile.services_home_title }}{% else %}Services{% endif %}</h2>
+            <a href="{% if site_profile.is_default %}{% url 'service_list' %}{% else %}/profil/{% profile_url_params site_profile %}/services/{% endif %}" class="view-all-link">{% if site_profile.services_view_all_text %}{{ site_profile.services_view_all_text }}{% else %}Voir tous les services{% endif %} →</a>
         </div>
+        {% if site_profile.services_home_intro %}
+        <div class="section-intro mb-4">
+            {{ site_profile.services_home_intro|safe }}
+        </div>
+        {% endif %}
 
         <div class="row g-4">
             {% for service in services %}
@@ -467,7 +522,7 @@
                             <a href="{{ service.calendly_url }}" target="_blank"
                                 class="btn btn-custom-primary btn-sm">Prendre rendez-vous</a>
                             {% endif %}
-                            <a href="{% url 'service_detail' service.slug %}" class="btn btn-custom-outline btn-sm">En
+                            <a href="{% if site_profile.is_default %}{% url 'service_detail' service.slug %}{% else %}/profil/{% profile_url_params site_profile %}/services/{{ service.slug }}/{% endif %}" class="btn btn-custom-outline btn-sm">En
                                 savoir plus</a>
                         </div>
                     </div>
