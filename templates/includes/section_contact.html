@@ -1,0 +1,170 @@
+<!-- Section Contact/Formulaire -->
+<section id="contact" class="container-fluid px-3 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0" style="font-size: 2rem; font-weight: 800; color: #475569; display: flex; align-items: center; gap: 12px;">
+            {% if site_profile.contact_title_image %}
+                <img src="{{ site_profile.contact_title_image.url }}" alt="Contact" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+            {% else %}
+                <i class="fas fa-paper-plane" style="color: #2c5282;"></i>
+            {% endif %}
+            <span>{% if site_profile.contact_title %}{{ site_profile.contact_title }}{% else %}Contactez-moi{% endif %}</span>
+        </h2>
+    </div>
+
+    {% if site_profile.contact_intro_text %}
+    <div class="section-intro mb-4" style="max-width: 800px;">
+        {{ site_profile.contact_intro_text|safe }}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="contact-form" style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-radius: 16px; padding: 2.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(44, 82, 130, 0.08); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #2c5282 0%, #4a90a4 100%);"></div>
+                
+                <form method="post" action="{% url 'contact' %}" id="contactForm">
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <!-- Nom complet -->
+                        <div class="col-md-6">
+                            <label for="name" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-user" style="color: #667eea;"></i>
+                                {{ site_profile.contact_name_label|default:"Nom complet" }} <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Jean Dupont" required
+                                   style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem;"
+                                   onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102, 126, 234, 0.1)'"
+                                   onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label for="email" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-envelope" style="color: #667eea;"></i>
+                                {{ site_profile.contact_email_label|default:"Adresse email" }} <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="jean.dupont@exemple.com" required
+                                   style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem;"
+                                   onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102, 126, 234, 0.1)'"
+                                   onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <!-- Entreprise -->
+                        <div class="col-md-6">
+                            <label for="company" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-building" style="color: #4a90a4;"></i>
+                                {{ site_profile.contact_company_label|default:"Entreprise" }}
+                            </label>
+                            <input type="text" name="company" class="form-control" id="company" placeholder="Nom de votre entreprise"
+                                   style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem;"
+                                   onfocus="this.style.borderColor='#4a90a4'; this.style.boxShadow='0 0 0 4px rgba(74, 144, 164, 0.1)'"
+                                   onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <!-- Profession -->
+                        <div class="col-md-6">
+                            <label for="profession" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-briefcase" style="color: #4a90a4;"></i>
+                                {{ site_profile.contact_profession_label|default:"Profession" }}
+                            </label>
+                            <input type="text" name="profession" class="form-control" id="profession" placeholder="Votre profession"
+                                   style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem;"
+                                   onfocus="this.style.borderColor='#4a90a4'; this.style.boxShadow='0 0 0 4px rgba(74, 144, 164, 0.1)'"
+                                   onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <!-- Objet -->
+                        <div class="col-12">
+                            <label for="subject" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-tag" style="color: #2c5282;"></i>
+                                {{ site_profile.contact_subject_label|default:"Objet" }} <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <input type="text" name="subject" class="form-control" id="subject" placeholder="Sujet de votre message" required
+                                   style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem;"
+                                   onfocus="this.style.borderColor='#2c5282'; this.style.boxShadow='0 0 0 4px rgba(44, 82, 130, 0.1)'"
+                                   onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'">
+                        </div>
+
+                        <!-- Message -->
+                        <div class="col-12">
+                            <label for="message" class="form-label" style="font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                                <i class="fas fa-comment-dots" style="color: #667eea;"></i>
+                                {{ site_profile.contact_message_label|default:"Votre message" }} <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <textarea class="form-control" name="message" id="message" rows="6" placeholder="Décrivez votre projet ou vos besoins..." required
+                                      style="border-radius: 12px; border: 2px solid rgba(100, 116, 139, 0.15); padding: 0.85rem 1rem; transition: all 0.3s ease; font-size: 1rem; resize: vertical;"
+                                      onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102, 126, 234, 0.1)'"
+                                      onblur="this.style.borderColor='rgba(100, 116, 139, 0.15)'; this.style.boxShadow='none'"></textarea>
+                            <div class="mt-2" style="font-size: 0.875rem; color: #64748b; display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="fas fa-info-circle me-1"></i> Les champs marqués d'un <span style="color: #e53e3e;">*</span> sont obligatoires</span>
+                                <span id="charCount" style="font-weight: 600;">0 / 1000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bouton d'envoi -->
+                    <button type="submit" class="btn btn-custom-primary w-100 mt-4" id="submitBtn"
+                            style="padding: 1rem; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 12px; transition: all 0.3s ease;">
+                        <i class="fas fa-paper-plane"></i>
+                        <span id="btnText">{{ site_profile.contact_button_text|default:"Envoyer le message" }}</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                            <span class="visually-hidden">Envoi en cours...</span>
+                        </span>
+                    </button>
+
+                    {% if site_profile.email %}
+                    <div class="mt-4 text-center" style="padding: 1rem; background: rgba(74, 144, 164, 0.05); border-radius: 10px; border-left: 4px solid #4a90a4;">
+                        <p class="mb-0" style="color: #475569; font-size: 0.95rem;">
+                            <i class="fas fa-envelope me-2" style="color: #4a90a4;"></i>
+                            Vous pouvez aussi me contacter directement à 
+                            <a href="mailto:{{ site_profile.email }}" style="font-weight: 700; color: #2c5282; text-decoration: none; transition: color 0.3s;"
+                               onmouseover="this.style.color='#4a90a4'" onmouseout="this.style.color='#2c5282'">
+                                {{ site_profile.email }}
+                            </a>
+                        </p>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Compteur de caractères pour le message
+document.addEventListener('DOMContentLoaded', function() {
+    const messageField = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    
+    if (messageField && charCount) {
+        messageField.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = `${length} / 1000`;
+            
+            if (length > 1000) {
+                charCount.style.color = '#e53e3e';
+                this.style.borderColor = '#e53e3e';
+            } else {
+                charCount.style.color = '#64748b';
+            }
+        });
+        
+        messageField.setAttribute('maxlength', '1000');
+    }
+    
+    // Animation d'envoi
+    if (form && submitBtn) {
+        form.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+            submitBtn.style.opacity = '0.7';
+        });
+    }
+});
+</script>

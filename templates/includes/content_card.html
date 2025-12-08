@@ -29,36 +29,69 @@ Exemples d'utilisation:
 
 {% load static %}
 
-<div class="card card-custom">
-    <div class="card-body">
-        {# Titre de la carte #}
-        <h3 class="card-title h5 mb-2">{{ item.title }}</h3>
-        
-        {# Image principale (optionnelle) #}
-        {% if show_image|default:True and item.main_image %}
-        <div class="card-media mb-3">
-            <img src="{{ item.main_image.url }}" alt="{{ item.title }}" class="img-fluid rounded">
+<div class="card portfolio-card" style="transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); animation: fadeIn 0.6s ease-out backwards;">
+    <div class="card-body" style="position: relative;">
+        {# Badge ou catégorie si disponible #}
+        {% if item.category or item.tags %}
+        <div class="mb-3" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            {% if item.category %}
+            <span class="badge" style="background: rgba(44, 82, 130, 0.08); color: #2c5282; border: 1px solid rgba(44, 82, 130, 0.2); padding: 4px 12px; border-radius: 8px; font-weight: 600; font-size: 0.75rem;">
+                {{ item.category }}
+            </span>
+            {% endif %}
         </div>
         {% endif %}
         
-        {# Métadonnées: auteur et date #}
-        {% if show_author|default:True or show_date|default:True %}
-        <p class="card-text text-muted small mb-2">
-            {% if show_author|default:True %}
-                <a href="mailto:{{ item.author_email }}">{{ item.author_name }}</a>{% if item.author_profession %}, {{ item.author_profession }}{% endif %}
-            {% endif %}
-            {% if show_author|default:True and show_date|default:True and item.published_at %}
-                <span class="mx-1">|</span>
-            {% endif %}
-            {% if show_date|default:True and item.published_at %}
-                {{ item.published_at|date:"d M Y" }}
-            {% endif %}
-        </p>
+        {# Titre de la carte avec hover subtil #}
+        <h3 class="card-title h5 mb-3" style="font-weight: 700; color: #1a202c; transition: color 0.3s ease;" 
+            onmouseover="this.style.color='#2c5282';" 
+            onmouseout="this.style.color='#1a202c';">
+            {{ item.title }}
+        </h3>
+        
+        {# Image principale avec effet subtil au survol #}
+        {% if show_image|default:True and item.main_image %}
+        <div class="card-media mb-3" style="position: relative; overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <img src="{{ item.main_image.url }}" 
+                 alt="{{ item.title }}" 
+                 class="img-fluid" 
+                 style="border-radius: 12px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: block; width: 100%;"
+                 onmouseover="this.style.transform='scale(1.03)'" 
+                 onmouseout="this.style.transform='scale(1)'">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(44, 82, 130, 0.03); opacity: 0; transition: opacity 0.3s ease; border-radius: 12px; pointer-events: none;" 
+                 onmouseover="this.style.opacity='1'" 
+                 onmouseout="this.style.opacity='0'"></div>
+        </div>
         {% endif %}
         
-        {# Résumé du contenu #}
+        {# Métadonnées: auteur et date avec icônes modernes #}
+        {% if show_author|default:True or show_date|default:True %}
+        <div class="mb-3" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--text-secondary, #64748b); font-size: 0.875rem;">
+            {% if show_author|default:True %}
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-user-circle" style="color: #2c5282;"></i>
+                <a href="mailto:{{ item.author_email }}" style="color: #4a5568; text-decoration: none; font-weight: 600; transition: color 0.3s ease;"
+                   onmouseover="this.style.color='#2c5282'" 
+                   onmouseout="this.style.color='#4a5568';">
+                    {{ item.author_name }}
+                </a>
+                {% if item.author_profession %}
+                <span style="color: #94a3b8;">• {{ item.author_profession }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if show_date|default:True and item.published_at %}
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-calendar-alt" style="color: #4a90a4;"></i>
+                <span>{{ item.published_at|date:"d M Y" }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {# Résumé du contenu avec hauteur fixe #}
         {% if item.resume %}
-        <p class="card-text mb-3">
+        <p class="card-text mb-4" style="color: var(--text-secondary, #64748b); line-height: 1.7; min-height: 60px;">
             {% if truncate_words %}
                 {{ item.resume|striptags|truncatewords:truncate_words }}
             {% else %}
@@ -67,20 +100,25 @@ Exemples d'utilisation:
         </p>
         {% endif %}
         
-        {# Boutons d'action #}
-        <div class="d-flex gap-2 flex-wrap mt-3">
+        {# Boutons d'action harmonieux #}
+        <div class="d-flex gap-2 flex-wrap mt-auto">
             {# Bouton supplémentaire (ex: Calendly pour services) #}
             {% if show_extra_button and extra_button_url %}
             <a href="{{ extra_button_url }}" 
                {% if extra_button_target %}target="{{ extra_button_target }}"{% endif %}
-               class="btn btn-custom-primary btn-sm">
+               class="btn btn-custom-primary btn-sm"
+               style="display: inline-flex; align-items: center; gap: 6px; padding: 0.55rem 1.1rem; font-size: 0.9rem; border-radius: 10px;">
+                <i class="fas fa-calendar-check" style="font-size: 0.85rem;"></i>
                 {{ extra_button_text|default:"Action" }}
             </a>
             {% endif %}
             
             {# Bouton principal de détail #}
-            <a href="{{ detail_url }}" class="btn {% if show_extra_button %}btn-custom-outline{% else %}btn-custom-primary{% endif %} btn-sm">
+            <a href="{{ detail_url }}" 
+               class="btn {% if show_extra_button %}btn-custom-outline{% else %}btn-custom-primary{% endif %} btn-sm"
+               style="display: inline-flex; align-items: center; gap: 6px; padding: 0.55rem 1.1rem; font-size: 0.9rem; border-radius: 10px;">
                 {{ button_text|default:"En savoir plus" }}
+                <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
             </a>
         </div>
     </div>

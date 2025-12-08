@@ -71,7 +71,7 @@ class SectionAdmin(admin.ModelAdmin):
 	list_filter = ("profile", "section_type", "is_active")
 	list_editable = ("is_active", "order")
 	search_fields = ("title", "profile__first_name", "profile__last_name")
-	fields = ("profile", "title", "section_type", "is_active", "order")
+	fields = ("profile", "title", "title_image", "section_type", "is_active", "order")
 
 
 class SiteProfileForm(forms.ModelForm):
@@ -103,15 +103,16 @@ class SiteProfileAdmin(admin.ModelAdmin):
 		("Publication", {"fields": ("is_published", "is_default", "slug", "profile_url_display"), "classes": ("collapse",)} ),
 		(None, {"fields": ("first_name", "last_name", "email", "profile_photo", "profile_preview")} ),
 		("Infos professionnelles", {"fields": ("profession", "current_employer", "current_employer_url"), "classes": ("collapse",)} ),
-		("Liens", {"fields": ("linkedin_url", "github_url"), "classes": ("collapse",)} ),
+		("Liens", {"fields": ("linkedin_url", "github_url", "medium_url", "youtube_url"), "classes": ("collapse",)} ),
 		("Localisation & Bio", {"fields": ("location", "bio"), "classes": ("collapse",)} ),
-		("Affichage Profil (position/titre)", {"fields": ("bio_position", "bio_show_title", "bio_title"), "classes": ("collapse",)} ),
+		("Affichage Profil (position/titre/image)", {"fields": ("bio_position", "bio_show_title", "bio_title", "bio_title_image"), "classes": ("collapse",)} ),
 		("Projets publiés", {"fields": ("published_projects", "featured_projects"), "classes": ("collapse",)} ),
 		("Articles publiés", {"fields": ("published_articles", "featured_articles"), "classes": ("collapse",)} ),
 		("Services publiés", {"fields": ("published_services", "featured_services"), "classes": ("collapse",)} ),
-		("Section Projets (titres/textes)", {"fields": ("projects_home_title", "projects_home_intro", "projects_navbar_label", "projects_page_title", "projects_page_intro", "projects_view_all_text"), "classes": ("collapse",)} ),
-		("Section Blog (titres/textes)", {"fields": ("blog_home_title", "blog_home_intro", "blog_navbar_label", "blog_page_title", "blog_page_intro", "blog_view_all_text"), "classes": ("collapse",)} ),
-		("Section Services (titres/textes)", {"fields": ("services_home_title", "services_home_intro", "services_navbar_label", "services_page_title", "services_page_intro", "services_view_all_text"), "classes": ("collapse",)} ),
+		("Section Projets (titres/textes/images)", {"fields": ("projects_display_order", "projects_home_title", "projects_home_intro", "projects_home_image", "projects_navbar_label", "projects_page_title", "projects_page_intro", "projects_page_image", "projects_view_all_text", "projects_detail_button_text", "projects_back_button_text"), "classes": ("collapse",)} ),
+		("Section Blog (titres/textes/images)", {"fields": ("blog_display_order", "blog_home_title", "blog_home_intro", "blog_home_image", "blog_navbar_label", "blog_page_title", "blog_page_intro", "blog_page_image", "blog_view_all_text", "blog_detail_button_text", "blog_back_button_text"), "classes": ("collapse",)} ),
+		("Section Services (titres/textes/images)", {"fields": ("services_display_order", "services_home_title", "services_home_intro", "services_home_image", "services_navbar_label", "services_page_title", "services_page_intro", "services_page_image", "services_view_all_text", "services_detail_button_text", "services_back_button_text", "services_calendly_button_text"), "classes": ("collapse",)} ),
+		("Section Contact (formulaire)", {"fields": ("contact_display_order", "contact_title", "contact_title_image", "contact_intro_text", "contact_name_label", "contact_email_label", "contact_company_label", "contact_profession_label", "contact_subject_label", "contact_message_label", "contact_button_text", "contact_success_message", "contact_error_message", "enable_confirmation_email", "gmail_app_password"), "classes": ("collapse",)} ),
 		("Branding", {"fields": ("site_title", "favicon", "navbar_avatar_shape", "navbar_avatar"), "classes": ("collapse",)} ),
 	)
 

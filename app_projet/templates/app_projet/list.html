@@ -5,7 +5,16 @@
 {% block content %}
 
 <div class="container-fluid px-3 mt-4">
-    <h1 class="section-title mb-4">{% if site_profile.projects_page_title %}{{ site_profile.projects_page_title }}{% else %}Mes Projets{% endif %}</h1>
+    <div class="mb-4">
+        <h1 class="section-title" style="font-size: 2rem; font-weight: 800; color: #1a202c; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px;">
+            {% if site_profile.projects_page_image %}
+                <img src="{{ site_profile.projects_page_image.url }}" alt="Projets" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+            {% else %}
+                <i class="fas fa-rocket" style="color: #2c5282;"></i>
+            {% endif %}
+            <span>{% if site_profile.projects_page_title %}{{ site_profile.projects_page_title }}{% else %}Tous les projets{% endif %}</span>
+        </h1>
+    </div>
     
     {% if site_profile.projects_page_intro %}
     <div class="section-intro mb-4">
@@ -21,7 +30,7 @@
             {% else %}
                 {% url 'projet_detail' slug=projet.slug as detail_url %}
             {% endif %}
-            {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text="Voir le projet" %}
+            {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text=site_profile.projects_detail_button_text %}
         </div>
         {% empty %}
         <div class="col-12">

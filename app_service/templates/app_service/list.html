@@ -5,7 +5,17 @@
 {% block content %}
 
 <div class="container-fluid px-3 mt-4">
-    <h1 class="section-title mb-4">{% if site_profile.services_page_title %}{{ site_profile.services_page_title }}{% else %}Services offerts{% endif %}</h1>
+    <!-- Cache buster: v2.0 - 2025-12-06 -->
+    <div class="mb-4">
+        <h1 class="section-title" style="font-size: 2rem; font-weight: 800; color: #1a202c; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px;">
+            {% if site_profile.services_page_image %}
+                <img src="{{ site_profile.services_page_image.url }}" alt="Services" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+            {% else %}
+                <i class="fas fa-briefcase" style="color: #2c5282;"></i>
+            {% endif %}
+            <span>{% if site_profile.services_page_title %}{{ site_profile.services_page_title }}{% else %}Tous les services{% endif %}</span>
+        </h1>
+    </div>
     
     {% if site_profile.services_page_intro %}
     <div class="section-intro mb-4">
@@ -21,7 +31,7 @@
             {% else %}
                 {% url 'service_detail' slug=service.slug as detail_url %}
             {% endif %}
-            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text="En savoir plus" show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text="📅 Prendre rendez-vous" extra_button_target="_blank" show_image=False show_author=False show_date=False %}
+            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text=site_profile.services_detail_button_text show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text=site_profile.services_calendly_button_text extra_button_target="_blank" show_image=False show_author=False show_date=False %}
         </div>
         {% empty %}
         <div class="col-12">

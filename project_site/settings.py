@@ -95,6 +95,8 @@ TEMPLATES = [
                 'app_acceuil.context_processors.menu_items',
                 'app_acceuil.context_processors.site_profile',
             ],
+            # Désactiver le cache des templates pour le développement
+            "debug": True,
         },
     },
 ]

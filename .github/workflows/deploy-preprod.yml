@@ -1,0 +1,57 @@
+name: Deploy to Preprod (Heroku)
+
+on:
+  push:
+    branches: [ dev-ymarega ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django Tests
+        run: |
+          python manage.py test --verbosity=2
+
+  deploy:
+    needs: test  # ✅ N'exécute le déploiement que si les tests passent
+    runs-on: ubuntu-latest
+
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME_PREPROD: ${{ secrets.HEROKU_APP_NAME_PREPROD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Check Heroku CLI version
+        run: heroku --version
+
+      - name: Login to Heroku Container Registry
+        run: heroku container:login
+
+      - name: Build and Push Docker Image to Heroku Preprod
+        run: heroku container:push web --app $HEROKU_APP_NAME_PREPROD
+
+      - name: Release Docker Image on Heroku Preprod
+        run: heroku container:release web --app $HEROKU_APP_NAME_PREPROD
+
+      - name: Run migrations on Heroku Preprod
+        run: heroku run python manage.py migrate --app $HEROKU_APP_NAME_PREPROD

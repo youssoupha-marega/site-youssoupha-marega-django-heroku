@@ -7,56 +7,77 @@
 <div class="container-fluid px-3 mt-4">
     <article>
         <!-- En-tête du service -->
-        <div class="mb-4">
-            <h1 class="section-title">{{ service.title }}</h1>
-        </div>
+        <h1 class="section-title mb-4" style="font-size: 2.2rem; font-weight: 700; color: #1a202c;">
+            <i class="fas fa-briefcase me-2" style="color: #2c5282; font-size: 1.8rem;"></i>
+            {{ service.title }}
+        </h1>
 
         <!-- Résumé -->
         <div class="mb-4">
-            <p class="lead">{{ service.resume }}</p>
+            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ service.resume }}</p>
         </div>
 
         <!-- Séparateur -->
-        <hr class="my-4">
+        <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(44, 82, 130, 0.2) 50%, transparent 100%); margin: 2.5rem 0;"></div>
 
         <!-- Description complète -->
         <div class="mb-5">
-            <div class="content-body">
+            <div class="content-body" style="line-height: 1.8; color: #475569;">
                 {{ service.content|safe }}
             </div>
         </div>
 
         <!-- Zone de call-to-action -->
-        <div class="card bg-light border-0 mb-5">
-            <div class="card-body text-center py-5">
-                <h3 class="h4 mb-3">Intéressé par ce service ?</h3>
-                <p class="mb-4">Prenez rendez-vous pour discuter de votre projet</p>
+        <div class="mb-5" style="background: rgba(44, 82, 130, 0.03); border: 1px solid rgba(44, 82, 130, 0.15); border-radius: 10px; padding: 3rem 2rem; text-align: center;">
+            <h3 class="h4 mb-3" style="font-weight: 700; color: #1a202c;">
+                <i class="fas fa-hand-point-right me-2" style="color: #2c5282;"></i>
+                Intéressé par ce service ?
+            </h3>
+            <p class="mb-4" style="color: #64748b; font-size: 1.05rem;">Prenez rendez-vous pour discuter de votre projet</p>
 
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    {% if service.calendly_url %}
-                    <a href="{{ service.calendly_url }}" target="_blank" class="btn btn-custom-primary btn-lg">
-                        📅 Prendre rendez-vous
-                    </a>
-                    {% endif %}
-                    {% if site_profile and site_profile.email %}
-                    <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" class="btn btn-custom-outline btn-lg">
-                        ✉️ M'envoyer un email
-                    </a>
-                    {% else %}
-                    <a href="{% url 'contact' %}" class="btn btn-custom-outline btn-lg">
-                        ✉️ M'envoyer un email
-                    </a>
-                    {% endif %}
-                </div>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                {% if service.calendly_url %}
+                <a href="{{ service.calendly_url }}" target="_blank" 
+                   class="btn btn-custom-primary" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.75rem; font-size: 1rem; border-radius: 10px;">
+                    <i class="fas fa-calendar-check"></i>
+                    Prendre rendez-vous
+                </a>
+                {% endif %}
+                {% if site_profile and site_profile.email %}
+                <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.75rem; font-size: 1rem; border-radius: 10px;">
+                    <i class="fas fa-envelope"></i>
+                    M'envoyer un email
+                </a>
+                {% else %}
+                <a href="{% url 'contact' %}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.75rem; font-size: 1rem; border-radius: 10px;">
+                    <i class="fas fa-envelope"></i>
+                    M'envoyer un email
+                </a>
+                {% endif %}
             </div>
         </div>
 
         <!-- Bouton retour -->
-        <div class="mt-5">
+        <div class="mt-5 mb-4">
             {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
-                <a href="{% url 'profile_service_list' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug %}" class="btn btn-custom-outline">← Retour aux services</a>
+                <a href="{% url 'profile_service_list' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug %}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 10px;">
+                    <i class="fas fa-arrow-left" style="font-size: 0.85rem;"></i>
+                    {{ site_profile.services_back_button_text }}
+                </a>
             {% else %}
-                <a href="{% url 'service_list' %}" class="btn btn-custom-outline">← Retour aux services</a>
+                <a href="{% url 'service_list' %}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 10px;">
+                    <i class="fas fa-arrow-left" style="font-size: 0.85rem;"></i>
+                    {{ site_profile.services_back_button_text }}
+                </a>
             {% endif %}
         </div>
     </article>

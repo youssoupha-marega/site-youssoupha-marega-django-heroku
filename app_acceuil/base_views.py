@@ -5,9 +5,12 @@ les apps projet, blog et service.
 
 from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from app_acceuil.models import SiteProfile
 
 
+@method_decorator(never_cache, name='dispatch')
 class ProfileBasedListView(ListView):
     """
     Vue de liste de base pour afficher du contenu lié à un profil.
@@ -56,6 +59,7 @@ class ProfileBasedListView(ListView):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class ProfileBasedDetailView(DetailView):
     """
     Vue de détail de base pour afficher un élément de contenu.

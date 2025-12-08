@@ -69,6 +69,8 @@ class SiteProfile(models.Model):
 	linkedin_url = models.URLField(blank=True, verbose_name=_("LinkedIn"))
 	github_url = models.URLField(blank=True, verbose_name=_("GitHub"))
 	email = models.EmailField(blank=True, verbose_name=_("Adresse email"))
+	medium_url = models.URLField(blank=True, verbose_name=_("Medium"))
+	youtube_url = models.URLField(blank=True, verbose_name=_("YouTube"))
 	profile_photo = models.ImageField(upload_to="profile/", blank=True, null=True, verbose_name=_("Photo de profil"))
 	bio = RichTextField(blank=True, verbose_name=_("Profil (rich text)"))
 	# Contrôles d'affichage de la section Profil
@@ -76,6 +78,7 @@ class SiteProfile(models.Model):
 	bio_position = models.CharField(max_length=10, choices=BIO_POSITION_CHOICES, default="right", verbose_name=_("Position de la section Profil"))
 	bio_show_title = models.BooleanField(default=True, verbose_name=_("Afficher le titre de la section Profil"))
 	bio_title = models.CharField(max_length=200, blank=True, verbose_name=_("Titre de la section Profil (facultatif)"))
+	bio_title_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image du titre Bio"))
 
 	# Branding fields for head/navbar editable in admin
 	site_title = models.CharField(max_length=200, blank=True, verbose_name=_("Titre du site (balise <title>)"))
@@ -92,6 +95,8 @@ class SiteProfile(models.Model):
 	projects_page_title = models.CharField(max_length=200, default="Mes Projets", verbose_name=_("Titre page liste Projets"))
 	projects_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Projets"))
 	projects_view_all_text = models.CharField(max_length=100, default="Voir tous les projets", verbose_name=_("Texte 'Voir tous les projets'"))
+	projects_detail_button_text = models.CharField(max_length=100, default="Voir le projet", verbose_name=_("Texte bouton détail projet"))
+	projects_back_button_text = models.CharField(max_length=100, default="Retour aux projets", verbose_name=_("Texte bouton retour projets"))
 
 	# Customizable Blog section titles and content
 	blog_home_title = models.CharField(max_length=200, default="Articles de blog mis en avant", verbose_name=_("Titre section Blog (Accueil)"))
@@ -100,6 +105,8 @@ class SiteProfile(models.Model):
 	blog_page_title = models.CharField(max_length=200, default="Articles de blog", verbose_name=_("Titre page liste Blog"))
 	blog_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Blog"))
 	blog_view_all_text = models.CharField(max_length=100, default="Voir tous les articles", verbose_name=_("Texte 'Voir tous les articles'"))
+	blog_detail_button_text = models.CharField(max_length=100, default="Lire l'article", verbose_name=_("Texte bouton lire article"))
+	blog_back_button_text = models.CharField(max_length=100, default="Retour aux articles", verbose_name=_("Texte bouton retour articles"))
 
 	# Customizable Services section titles and content
 	services_home_title = models.CharField(max_length=200, default="Services", verbose_name=_("Titre section Services (Accueil)"))
@@ -108,6 +115,39 @@ class SiteProfile(models.Model):
 	services_page_title = models.CharField(max_length=200, default="Services offerts", verbose_name=_("Titre page liste Services"))
 	services_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Services"))
 	services_view_all_text = models.CharField(max_length=100, default="Voir tous les services", verbose_name=_("Texte 'Voir tous les services'"))
+	services_detail_button_text = models.CharField(max_length=100, default="En savoir plus", verbose_name=_("Texte bouton détail service"))
+	services_back_button_text = models.CharField(max_length=100, default="Retour aux services", verbose_name=_("Texte bouton retour services"))
+	services_calendly_button_text = models.CharField(max_length=100, default="Prendre rendez-vous", verbose_name=_("Texte bouton Calendly"))
+
+	# Images optionnelles pour les sections Projets, Blog, Services (Accueil et pages)
+	projects_home_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image section Projets (Accueil)"))
+	projects_page_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image page liste Projets"))
+	blog_home_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image section Blog (Accueil)"))
+	blog_page_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image page liste Blog"))
+	services_home_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image section Services (Accueil)"))
+	services_page_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image page liste Services"))
+
+	# Ordre d'affichage des sections (navbar + page d'accueil)
+	projects_display_order = models.PositiveIntegerField(default=2, verbose_name=_("Ordre d'affichage Projets"))
+	blog_display_order = models.PositiveIntegerField(default=3, verbose_name=_("Ordre d'affichage Blog"))
+	services_display_order = models.PositiveIntegerField(default=4, verbose_name=_("Ordre d'affichage Services"))
+	contact_display_order = models.PositiveIntegerField(default=5, verbose_name=_("Ordre d'affichage Contact"))
+
+	# Section Contact - Configuration
+	contact_title = models.CharField(max_length=200, blank=True, verbose_name=_("Titre de la section Contact"))
+	contact_title_image = models.ImageField(upload_to='section_images/', blank=True, null=True, verbose_name=_("Image du titre Contact"))
+	contact_intro_text = models.TextField(blank=True, verbose_name=_("Texte d'introduction Contact"))
+	contact_name_label = models.CharField(max_length=100, default="Nom complet", verbose_name=_("Label champ Nom"))
+	contact_email_label = models.CharField(max_length=100, default="Adresse email", verbose_name=_("Label champ Email"))
+	contact_company_label = models.CharField(max_length=100, default="Entreprise", verbose_name=_("Label champ Entreprise"))
+	contact_profession_label = models.CharField(max_length=100, default="Profession", verbose_name=_("Label champ Profession"))
+	contact_subject_label = models.CharField(max_length=100, default="Objet", verbose_name=_("Label champ Objet"))
+	contact_message_label = models.CharField(max_length=100, default="Votre message", verbose_name=_("Label champ Message"))
+	contact_button_text = models.CharField(max_length=100, default="Envoyer le message", verbose_name=_("Texte du bouton"))
+	contact_success_message = models.TextField(default="Merci ! Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.", verbose_name=_("Message de succès"))
+	contact_error_message = models.TextField(default="Une erreur s'est produite lors de l'envoi de votre message. Veuillez réessayer.", verbose_name=_("Message d'erreur"))
+	enable_confirmation_email = models.BooleanField(default=True, verbose_name=_("Envoyer un email de confirmation à l'expéditeur"))
+	gmail_app_password = models.CharField(max_length=100, blank=True, verbose_name=_("Mot de passe d'application Gmail"), help_text=_("Requis pour envoyer des emails. Créez-le sur https://myaccount.google.com/apppasswords"))
 
 	# Relations Many-to-Many pour choisir les contenus à publier par profil
 	# Importation dynamique pour éviter les imports circulaires
@@ -154,6 +194,16 @@ class SiteProfile(models.Model):
 		if self.is_default:
 			SiteProfile.objects.filter(is_default=True).exclude(pk=self.pk).update(is_default=False)
 		super().save(*args, **kwargs)
+
+	def get_ordered_sections(self):
+		"""Retourne les sections principales dans l'ordre configuré (pour navbar et page d'accueil)"""
+		sections = [
+			{'type': 'projects', 'order': self.projects_display_order, 'in_navbar': True},
+			{'type': 'blog', 'order': self.blog_display_order, 'in_navbar': True},
+			{'type': 'services', 'order': self.services_display_order, 'in_navbar': True},
+			{'type': 'contact', 'order': self.contact_display_order, 'in_navbar': False},
+		]
+		return sorted(sections, key=lambda x: x['order'])
 
 	@property
 	def initials(self):
@@ -219,6 +269,7 @@ class Section(models.Model):
 	profile = models.ForeignKey(SiteProfile, on_delete=models.CASCADE, related_name="sections")
 	section_type = models.CharField(max_length=20, choices=SECTION_TYPES, verbose_name=_("Type de section"))
 	title = models.CharField(max_length=200, verbose_name=_("Titre de la section"))
+	title_image = models.ImageField(upload_to="section_images/", blank=True, null=True, verbose_name=_("Image du titre"))
 	is_active = models.BooleanField(default=True, verbose_name=_("Afficher cette section"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre d'affichage"))
 

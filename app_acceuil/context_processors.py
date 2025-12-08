@@ -27,14 +27,22 @@ def menu_items(request):
             blog_label = profile.blog_navbar_label if profile.blog_navbar_label else "Blogue"
             services_label = profile.services_navbar_label if profile.services_navbar_label else "Services"
             
+            # Récupérer l'ordre des sections (seulement celles dans la navbar)
+            ordered_sections = [s for s in profile.get_ordered_sections() if s['in_navbar']]
+            
+            # Mapping des types de sections vers leurs configurations
+            section_config = {
+                'projects': {'name': 'projet_list', 'profile_name': 'profile_projet_list', 'label': projects_label, 'default_path': '/projets/', 'profile_path': '/projets/'},
+                'blog': {'name': 'blogue_list', 'profile_name': 'profile_blogue_list', 'label': blog_label, 'default_path': '/blogue/', 'profile_path': '/blog/'},
+                'services': {'name': 'service_list', 'profile_name': 'profile_service_list', 'label': services_label, 'default_path': '/services/', 'profile_path': '/services/'},
+            }
+            
             # Générer les URLs en fonction du profil
             if profile.is_default:
-                items = [
-                    {"name": "acceuil", "label": "Accueil", "url": "/"},
-                    {"name": "service_list", "label": services_label, "url": "/services/"},
-                    {"name": "projet_list", "label": projects_label, "url": "/projets/"},
-                    {"name": "blogue_list", "label": blog_label, "url": "/blogue/"},
-                ]
+                items = [{"name": "acceuil", "label": "Accueil", "url": "/"}]
+                for section in ordered_sections:
+                    config = section_config[section['type']]
+                    items.append({"name": config['name'], "label": config['label'], "url": config['default_path']})
             else:
                 # Utiliser les paramètres dans le chemin
                 from django.utils.text import slugify
@@ -42,12 +50,10 @@ def menu_items(request):
                 profession_slug = slugify(profile.profession) if profile.profession else "profil"
                 base_path = f"/profil/nom={nom_slug}&profession={profession_slug}"
                 
-                items = [
-                    {"name": "profile_home", "label": "Accueil", "url": f"{base_path}/"},
-                    {"name": "profile_service_list", "label": services_label, "url": f"{base_path}/services/"},
-                    {"name": "profile_projet_list", "label": projects_label, "url": f"{base_path}/projets/"},
-                    {"name": "profile_blogue_list", "label": blog_label, "url": f"{base_path}/blog/"},
-                ]
+                items = [{"name": "profile_home", "label": "Accueil", "url": f"{base_path}/"}]
+                for section in ordered_sections:
+                    config = section_config[section['type']]
+                    items.append({"name": config['profile_name'], "label": config['label'], "url": f"{base_path}{config['profile_path']}"})
         else:
             items = [
                 {"name": "acceuil", "label": "Accueil", "url": "/"},

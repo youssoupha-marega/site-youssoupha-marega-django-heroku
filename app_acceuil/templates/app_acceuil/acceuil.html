@@ -5,129 +5,395 @@
 {% block content %}
 
 <style>
-    .portfolio-card {
-        background: #f8f9fa;
-        border: 1px solid #e1e1e1;
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-
+    /* Grid wrapper moderne */
     .grid-wrapper {
-        margin-top: 10px;
+        margin-top: 2rem;
     }
 
-    .social-icon {
-        width: 40px;
-        height: 40px;
-        object-fit: contain;
-    }
-
-    .icon-inline {
-        width: 15px;
-        height: 15px;
-        object-fit: contain;
-        margin-right: 4px;
-        vertical-align: text-bottom;
-    }
-
-    .location-text {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #6c757d;
-    }
-    .education-item {
+    /* Items d'éducation/expérience avec design moderne */
+    .education-item,
+    .experience-item {
         display: flex;
-        gap: 12px;
+        gap: 14px;
         align-items: flex-start;
-        margin-bottom: 0.8rem;
+        margin-bottom: 1rem;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
     }
 
+    .education-item:hover,
+    .experience-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateX(4px);
+        border-color: rgba(44, 82, 130, 0.2);
+        box-shadow: 0 2px 8px rgba(44, 82, 130, 0.08);
+    }
+
+    /* Icône moderne avec gradient */
     .edu-icon {
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         border-radius: 12px;
-        background: #f8f9fa; /* same as .portfolio-card */
-        color: #212529;
+        background: rgba(44, 82, 130, 0.05);
+        color: #2c5282;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-        flex: 0 0 48px;
-        border: 1px solid #e1e1e1; /* match portfolio-card border */
-        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        font-size: 22px;
+        flex: 0 0 52px;
+        border: 2px solid rgba(44, 82, 130, 0.15);
+        box-shadow: 0 1px 4px rgba(44, 82, 130, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
 
-    .edu-title {
-        font-weight: 600;
-        color: #212529;
-        line-height: 1.1;
+    .edu-icon::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transform: rotate(45deg);
+        transition: all 0.5s;
     }
 
-    .edu-institution {
-        color: #6c757d;
-        font-size: 0.9rem;
-        margin-top: 4px;
+    .education-item:hover .edu-icon::before,
+    .experience-item:hover .edu-icon::before {
+        left: 100%;
     }
-    /* Title/date wrap behavior: date moves to next line first */
-    .edu-title-wrap { flex-wrap: wrap; }
-    .edu-title { flex: 1 1 auto; min-width: 0; }
-    .edu-meta { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
-    /* Match experience date style (inside bold title) */
-    .edu-year { font-weight: 600; }
+
+    .education-item:hover .edu-icon,
+    .experience-item:hover .edu-icon {
+        transform: scale(1.05) rotate(5deg);
+        border-color: rgba(44, 82, 130, 0.3);
+        box-shadow: 0 2px 8px rgba(44, 82, 130, 0.2);
+    }
+
     .edu-icon img {
-        width: 90%;
-        height: 90%;
+        width: 85%;
+        height: 85%;
         object-fit: cover;
         display: block;
-        border-radius: 6px;
-    }
-    .btn-eye {
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        width:16px;
-        height:16px;
-        padding:0;
-        border:none;
-        outline:none;
-        background:transparent;
-        box-shadow:none;
-        border-radius:0;
-        cursor:pointer;
-        color:#6c757d; /* match muted */
-        line-height:1;
-    }
-    /* Exposant discret pour l'œil */
-    .btn-eye-inline { 
-        margin-left: 4px; 
-        vertical-align: super; 
-        position: relative; 
-        top: -2px; /* léger décalage vers le haut */
-    }
-    .btn-eye-inline svg { width: 14px; height: 14px; }
-    .edu-details {
-        background:#ffffff;
-        border:1px solid #e9ecef;
-        padding:10px;
-        border-radius:6px;
-    }
-    /* Removed strike style on meta: years are never struck */
-    /* Default: details cachés -> montrer OEIL BARRÉ */
-    .btn-eye .icon-eye { display:none }
-    .btn-eye .icon-eye-slash { display:inline-block }
-    /* Actif (détails affichés) -> montrer OEIL SANS BARRE */
-    .btn-eye.active .icon-eye { display:inline-block }
-    .btn-eye.active .icon-eye-slash { display:none }
-    /* No asterisk anymore */
-    .experience-item {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        margin-bottom: 0.8rem;
+        border-radius: 8px;
     }
 
-    /* experience images share the same styling via .edu-icon img */
+    /* Titre moderne avec gradient au hover */
+    .edu-title {
+        font-weight: 700;
+        color: #1a202c;
+        line-height: 1.3;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+    }
+
+    .education-item:hover .edu-title,
+    .experience-item:hover .edu-title {
+        color: #2c5282;
+    }
+
+    /* Institution/subtitle avec icône */
+    .edu-institution {
+        color: #4a5568;
+        font-size: 0.9rem;
+        margin-top: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .edu-institution a {
+        color: inherit;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .edu-institution a:hover {
+        color: #4a90a4;
+    }
+
+    /* Année avec style */
+    .edu-year {
+        font-weight: 600;
+        color: #2c5282;
+        font-size: 0.9rem;
+    }
+
+    /* Bouton œil moderne */
+    .btn-eye {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: none;
+        outline: none;
+        background: rgba(44, 82, 130, 0.1);
+        border-radius: 6px;
+        cursor: pointer;
+        color: #2c5282;
+        line-height: 1;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-left: 8px;
+        vertical-align: middle;
+        position: relative;
+        top: -1px;
+    }
+
+    .btn-eye:hover {
+        background: #2c5282;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(44, 82, 130, 0.3);
+    }
+
+    .btn-eye svg {
+        width: 14px;
+        height: 14px;
+        transition: all 0.3s ease;
+    }
+
+    /* États de l'œil */
+    .btn-eye .icon-eye { display: none; }
+    .btn-eye .icon-eye-slash { display: inline-block; }
+    .btn-eye.active .icon-eye { display: inline-block; }
+    .btn-eye.active .icon-eye-slash { display: none; }
+
+    .btn-eye.active {
+        background: #2c5282;
+        color: white;
+        box-shadow: 0 1px 4px rgba(44, 82, 130, 0.25);
+    }
+
+    /* Détails cachés/visibles avec animation */
+    .edu-details {
+        background: rgba(44, 82, 130, 0.03);
+        border: 1px solid rgba(44, 82, 130, 0.15);
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 12px;
+        box-shadow: inset 0 1px 3px rgba(44, 82, 130, 0.05);
+        animation: slideDown 0.3s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .edu-details::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #2c5282 0%, #4a90a4 100%);
+        border-radius: 0 2px 2px 0;
+    }
+
+    .edu-details ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #4a5568;
+    }
+
+    .edu-details ul li {
+        margin-bottom: 6px;
+        position: relative;
+    }
+
+    .edu-details ul li::marker {
+        color: #2c5282;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Profil bio avec design moderne - bordure à gauche */
+    .bio-section {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(44, 82, 130, 0.08);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: left;
+    }
+
+    .bio-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #2c5282 0%, #4a90a4 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .bio-section:hover::before {
+        opacity: 1;
+    }
+
+    .bio-section:hover {
+        box-shadow: 0 4px 12px rgba(44, 82, 130, 0.15);
+        transform: translateX(8px);
+        border-color: rgba(44, 82, 130, 0.3);
+    }
+
+    .bio-section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 1rem;
+    }
+
+    .bio-section p {
+        color: #4a5568;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* Titre de section moderne */
+    .section-heading {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba(44, 82, 130, 0.1);
+        position: relative;
+        color: #1a202c;
+    }
+
+    .section-heading i {
+        color: #2c5282;
+        font-size: 1.2rem;
+    }
+
+    .section-heading::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: linear-gradient(90deg, #2c5282 0%, #4a90a4 100%);
+    }
+
+    /* Liste d'éducation */
+    .education-list {
+        padding: 0;
+    }
+
+    /* Tooltip moderne pour le bouton œil */
+    .btn-eye[title] {
+        position: relative;
+    }
+
+    .btn-eye[title]:hover::after {
+        content: attr(title);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: tooltipFadeIn 0.2s ease-out;
+        pointer-events: none;
+    }
+
+    .btn-eye[title]:hover::before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-2px);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid #1a1a2e;
+        z-index: 1001;
+        animation: tooltipFadeIn 0.2s ease-out;
+        pointer-events: none;
+    }
+
+    @keyframes tooltipFadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-8px);
+        }
+    }
+
+    /* Effet pulse sur les icônes importantes */
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(102, 126, 234, 0);
+        }
+    }
+
+    .edu-icon.highlight {
+        animation: pulse 2s infinite;
+    }
+
+    /* Responsive amélioré */
+    @media (max-width: 768px) {
+        .bio-section {
+            padding: 18px;
+        }
+        
+        .bio-section h1 {
+            font-size: 1.5rem;
+        }
+        
+        .section-heading {
+            font-size: 1.15rem;
+        }
+        
+        .edu-icon {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            font-size: 18px;
+        }
+        
+        .education-item,
+        .experience-item {
+            padding: 10px;
+        }
+        
+        .edu-title {
+            font-size: 0.95rem;
+        }
+    }
 </style>
 
 <!-- ============================================ -->
@@ -137,60 +403,83 @@
 
     <div class="row align-items-start">
 
-        <!-- Colonne gauche : photo + infos -->
+        <!-- Colonne gauche : photo + infos avec effet moderne -->
         <div class="col-md-4 text-center">
 
             {% if site_profile and site_profile.profile_photo %}
-            <img src="{{ site_profile.profile_photo.url }}" class="rounded-circle img-fluid mb-3" style="max-width: 220px;">
+            <div class="position-relative d-inline-block mb-3">
+                <img src="{{ site_profile.profile_photo.url }}" class="rounded-circle img-fluid animate-fade-in" style="max-width: 220px; border: 3px solid rgba(44, 82, 130, 0.2); box-shadow: 0 4px 16px rgba(44, 82, 130, 0.1);">
+                <div style="position: absolute; bottom: 10px; right: 10px; width: 18px; height: 18px; background: #4a90a4; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
+            </div>
             {% else %}
-            <img src="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}" class="rounded-circle img-fluid mb-3" style="max-width: 220px;">
+            <div class="position-relative d-inline-block mb-3">
+                <img src="{% static 'img/photo_graduate_uqam_youssoupha_marega.png' %}" class="rounded-circle img-fluid animate-fade-in" style="max-width: 220px; border: 3px solid rgba(44, 82, 130, 0.2); box-shadow: 0 4px 16px rgba(44, 82, 130, 0.1);">
+                <div style="position: absolute; bottom: 10px; right: 10px; width: 18px; height: 18px; background: #4a90a4; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
+            </div>
             {% endif %}
 
-            <h2 class="h3 mb-1">{% if site_profile %}{{ site_profile.first_name }} {{ site_profile.last_name }}{% else %}Youssoupha Marega{% endif %}</h2>
-            <p class="location-text mb-1">
+            <h2 class="h3 mb-1 animate-fade-in animate-delay-1" style="font-weight: 700; color: #1a202c;">{% if site_profile %}{{ site_profile.first_name }} {{ site_profile.last_name }}{% else %}Youssoupha Marega{% endif %}</h2>
+            <p class="location-text mb-2 animate-fade-in animate-delay-2">
                 {% if site_profile and site_profile.location %}
-                <img src="{% static 'img/logo/google_maps.png' %}" class="icon-inline" alt="Localisation"> {{ site_profile.location }}
+                <i class="fas fa-map-marker-alt" style="color: #2c5282; margin-right: 6px;"></i>{{ site_profile.location }}
                 {% else %}
-                <img src="{% static 'img/logo/google_maps.png' %}" class="icon-inline" alt="Localisation"> Montréal, Québec, Canada
+                <i class="fas fa-map-marker-alt" style="color: #2c5282; margin-right: 6px;"></i>Montréal, Québec, Canada
                 {% endif %}
             </p>
-            <p class="text-muted mb-1">{% if site_profile and site_profile.profession %}{{ site_profile.profession }}{% else %}Scientifique de données{% endif %}</p>
+            <p class="mb-2 animate-fade-in animate-delay-2" style="font-size: 1.1rem; font-weight: 600; color: #2c5282;">
+                {% if site_profile and site_profile.profession %}{{ site_profile.profession }}{% else %}Scientifique de données{% endif %}
+            </p>
 
-            <p class="text-muted">
+            <p class="text-muted mb-3 animate-fade-in animate-delay-3">
                 {% if site_profile and site_profile.current_employer and site_profile.current_employer_url %}
-                <a href="{{ site_profile.current_employer_url }}" class="fw-semibold text-primary text-decoration-none" target="_blank">{{ site_profile.current_employer }}</a>
+                <i class="fas fa-building" style="color: #2c5282; margin-right: 6px;"></i><a href="{{ site_profile.current_employer_url }}" class="fw-semibold text-decoration-none" style="color: #4a90a4;" target="_blank">{{ site_profile.current_employer }}</a>
                 {% elif site_profile and site_profile.current_employer %}
-                <span class="fw-semibold">{{ site_profile.current_employer }}</span>
+                <i class="fas fa-building" style="color: #2c5282; margin-right: 6px;"></i><span class="fw-semibold" style="color: #4a5568;">{{ site_profile.current_employer }}</span>
                 {% else %}
-                <a href="https://www.nordikeau.com/" class="fw-semibold text-primary text-decoration-none" target="_blank">Nordikeau</a>
+                <i class="fas fa-building" style="color: #2c5282; margin-right: 6px;"></i><a href="https://www.nordikeau.com/" class="fw-semibold text-decoration-none" style="color: #4a90a4;" target="_blank">Nordikeau</a>
                 {% endif %}
             </p>
 
-            <div class="mt-2 d-flex justify-content-center align-items-center gap-3">
+            <div class="mt-3 d-flex justify-content-center align-items-center gap-3 animate-fade-in animate-delay-4">
                 {% if site_profile and site_profile.github_url %}
-                <a href="{{ site_profile.github_url }}" target="_blank">
-                    <img src="{% static 'img/logo/github.png' %}" class="social-icon" alt="GitHub">
+                <a href="{{ site_profile.github_url }}" target="_blank" class="tech-icon" style="width: 44px; height: 44px; font-size: 20px;">
+                    <i class="fab fa-github"></i>
                 </a>
                 {% endif %}
                 {% if site_profile and site_profile.email %}
-                <a href="mailto:{{ site_profile.email }}">
-                    <img src="{% static 'img/logo/gmail.png' %}" class="social-icon" alt="Gmail">
+                <a href="mailto:{{ site_profile.email }}" class="tech-icon" style="width: 44px; height: 44px; font-size: 20px;">
+                    <i class="fas fa-envelope"></i>
                 </a>
                 {% endif %}
                 {% if site_profile and site_profile.linkedin_url %}
-                <a href="{{ site_profile.linkedin_url }}" target="_blank">
-                    <img src="{% static 'img/logo/linkedin.png' %}" class="social-icon" alt="LinkedIn">
+                <a href="{{ site_profile.linkedin_url }}" target="_blank" class="tech-icon" style="width: 44px; height: 44px; font-size: 20px;">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                {% endif %}
+                {% if site_profile and site_profile.medium_url %}
+                <a href="{{ site_profile.medium_url }}" target="_blank" class="tech-icon" style="width: 44px; height: 44px; font-size: 20px;">
+                    <i class="fab fa-medium-m"></i>
+                </a>
+                {% endif %}
+                {% if site_profile and site_profile.youtube_url %}
+                <a href="{{ site_profile.youtube_url }}" target="_blank" class="tech-icon" style="width: 44px; height: 44px; font-size: 20px;">
+                    <i class="fab fa-youtube"></i>
                 </a>
                 {% endif %}
             </div>
 
             {# Bio déplacée à gauche si configurée #}
             {% if site_profile and site_profile.bio and site_profile.bio_position == 'left' %}
-            <div class="text-start mt-3 px-2">
+            <div class="bio-section animate-fade-in animate-delay-4" style="margin-top: 0.5rem;">
                 {% if site_profile.bio_show_title %}
-                <h3 class="mb-2">{{ site_profile.bio_title|default:"Profil" }}</h3>
+                <h3 class="mb-3" style="font-size: 1.3rem; font-weight: 700; color: #1a202c; text-align: left; display: flex; align-items: center; gap: 12px;">
+                    {% if site_profile.bio_title_image %}
+                    <img src="{{ site_profile.bio_title_image.url }}" alt="{{ site_profile.bio_title|default:'Profil' }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                    {% endif %}
+                    <span>{{ site_profile.bio_title|default:"Profil" }}</span>
+                </h3>
                 {% endif %}
-                <div class="mb-2">{{ site_profile.bio|safe }}</div>
+                <div class="mb-2" style="color: #4a5568; line-height: 1.7; text-align: left;">{{ site_profile.bio|safe }}</div>
             </div>
             {% endif %}
         </div>
@@ -198,24 +487,45 @@
         <!-- Colonne droite : Profil + grille -->
         <div class="col-md-8">
 
+            <!-- Section Bio uniquement si elle n'est PAS à gauche -->
             {% if site_profile and site_profile.bio_position != 'left' %}
+            <div class="bio-section animate-fade-in">
                 {% if site_profile and site_profile.bio_show_title %}
-                <h1 class="mb-3">{{ site_profile.bio_title|default:"Profil" }}</h1>
+                <h1 class="mb-3" style="color: #1a202c; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    {% if site_profile.bio_title_image %}
+                    <img src="{{ site_profile.bio_title_image.url }}" alt="{{ site_profile.bio_title|default:'Profil' }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+                    {% endif %}
+                    <span>{{ site_profile.bio_title|default:"Profil" }}</span>
+                </h1>
                 {% endif %}
-            {% endif %}
 
-            {% if site_profile and site_profile.bio and site_profile.bio_position != 'left' %}
-            <div class="mb-2">{{ site_profile.bio|safe }}</div>
+                {% if site_profile and site_profile.bio %}
+                <div>{{ site_profile.bio|safe }}</div>
+                {% else %}
+                <p class="mb-2">
+                    Je suis data scientist spécialisé en modélisation statistique,
+                    prévision de séries temporelles et MLOps.
+                </p>
+
+                <p class="mb-0">
+                    Je travaille sur des projets combinant données, IA et impact opérationnel :
+                    énergie, eau potable, risques, optimisation et automatisation.
+                </p>
+                {% endif %}
+            </div>
             {% elif not site_profile or not site_profile.bio %}
-            <p class="mb-2">
-                Je suis data scientist spécialisé en modélisation statistique,
-                prévision de séries temporelles et MLOps.
-            </p>
+            {# Afficher la bio par défaut uniquement si pas de site_profile #}
+            <div class="bio-section animate-fade-in">
+                <p class="mb-2">
+                    Je suis data scientist spécialisé en modélisation statistique,
+                    prévision de séries temporelles et MLOps.
+                </p>
 
-            <p class="mb-0">
-                Je travaille sur des projets combinant données, IA et impact opérationnel :
-                énergie, eau potable, risques, optimisation et automatisation.
-            </p>
+                <p class="mb-0">
+                    Je travaille sur des projets combinant données, IA et impact opérationnel :
+                    énergie, eau potable, risques, optimisation et automatisation.
+                </p>
+            </div>
             {% endif %}
 
             <!-- ============================================ -->
@@ -228,9 +538,18 @@
                     {% if site_profile and site_profile.sections.exists %}
                         {% for section in site_profile.sections.all %}
                             {% if section.is_active %}
-                                <div class="col-md-6">
+                                <div class="col-md-6 animate-fade-in">
                                     <div class="portfolio-card h-100">
-                                        <h3>{{ section.title }}</h3>
+                                        <h3 class="section-heading" style="display: flex; align-items: center; gap: 12px;">
+                                            {% if section.title_image %}
+                                                <img src="{{ section.title_image.url }}" alt="{{ section.title }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                            {% elif section.icon %}
+                                                <i class="{{ section.icon }}"></i>
+                                            {% else %}
+                                                <i class="fas fa-layer-group"></i>
+                                            {% endif %}
+                                            <span>{{ section.title }}</span>
+                                        </h3>
                                         <div class="education-list">
                                             {% for item in section.items.all %}
                                                 <div class="education-item">
@@ -281,13 +600,15 @@
                         {% endfor %}
                     {% else %}
                         <!-- Fallback statique si aucune section n'est configurée -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 animate-fade-in">
                             <div class="portfolio-card h-100">
-                                <h3>Compétences</h3>
+                                <h3 class="section-heading">
+                                    <i class="fas fa-brain me-2"></i>Compétences
+                                </h3>
                                 <div class="education-list">
                                     <div class="education-item">
                                         <div class="edu-icon">
-                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="compétence" class="edu-img">
+                                            <i class="fas fa-chart-line"></i>
                                         </div>
                                         <div>
                                             <div class="edu-title">Data Science & ML</div>
@@ -297,13 +618,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 animate-fade-in animate-delay-1">
                             <div class="portfolio-card h-100">
-                                <h3>Stack techniques</h3>
+                                <h3 class="section-heading">
+                                    <i class="fas fa-code me-2"></i>Stack techniques
+                                </h3>
                                 <div class="education-list">
                                     <div class="education-item">
                                         <div class="edu-icon">
-                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="stack" class="edu-img">
+                                            <i class="fab fa-python"></i>
                                         </div>
                                         <div>
                                             <div class="edu-title">Programmation</div>
@@ -314,13 +637,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 animate-fade-in animate-delay-2">
                             <div class="portfolio-card h-100">
-                                <h3>Intérêts</h3>
+                                <h3 class="section-heading">
+                                    <i class="fas fa-lightbulb me-2"></i>Intérêts
+                                </h3>
                                 <div class="education-list">
                                     <div class="education-item">
                                         <div class="edu-icon">
-                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="intérêt" class="edu-img">
+                                            <i class="fas fa-project-diagram"></i>
                                         </div>
                                         <div>
                                             <div class="edu-title">Time Series Forecasting</div>
@@ -330,13 +655,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 animate-fade-in animate-delay-3">
                             <div class="portfolio-card h-100">
-                                <h3>Valeurs</h3>
+                                <h3 class="section-heading">
+                                    <i class="fas fa-star me-2"></i>Valeurs
+                                </h3>
                                 <div class="education-list">
                                     <div class="education-item">
                                         <div class="edu-icon">
-                                            <img src="{% static 'img/chapeau_diplome.png' %}" alt="valeur" class="edu-img">
+                                            <i class="fas fa-trophy"></i>
                                         </div>
                                         <div>
                                             <div class="edu-title">Excellence technique</div>
@@ -354,81 +681,24 @@
 
     </div> <!-- fin row -->
 
-    <!-- Séparateur gris -->
-    <div class="section-separator"></div>
-    
     <!-- ============================================ -->
-    <!-- SECTION 3 : PROJETS (mise en avant) -->
+    <!-- SECTIONS DYNAMIQUES (ordre configurable) -->
     <!-- ============================================ -->
-    <section id="projets" class="container-fluid px-3">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">{% if site_profile.projects_home_title %}{{ site_profile.projects_home_title }}{% else %}Projets mis en avant{% endif %}</h2>
-            <a href="{% if site_profile.is_default %}{% url 'projet_list' %}{% else %}/profil/{% profile_url_params site_profile %}/projets/{% endif %}" class="view-all-link">{% if site_profile.projects_view_all_text %}{{ site_profile.projects_view_all_text }}{% else %}Voir tous les projets{% endif %} →</a>
-        </div>
-        {% if site_profile.projects_home_intro %}
-        <div class="section-intro mb-4">
-            {{ site_profile.projects_home_intro|safe }}
-        </div>
+    {% for section in site_profile.get_ordered_sections %}
+        <!-- Séparateur moderne avec gradient -->
+        <div class="section-separator"></div>
+        
+        {% if section.type == 'projects' %}
+            {% include 'includes/section_projects.html' %}
+        {% elif section.type == 'blog' %}
+            {% include 'includes/section_blog.html' %}
+        {% elif section.type == 'services' %}
+            {% include 'includes/section_services_NEW.html' %}
+        {% elif section.type == 'contact' %}
+            {% include 'includes/section_contact.html' %}
         {% endif %}
+    {% endfor %}
 
-    <div class="row g-4">
-        {% for projet in projets %}
-        <div class="col-md-4">
-            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
-                {% url 'profile_projet_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=projet.slug as detail_url %}
-            {% else %}
-                {% url 'projet_detail' slug=projet.slug as detail_url %}
-            {% endif %}
-            {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text="Voir le projet" %}
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <p class="text-muted">Aucun projet mis en avant pour le moment.</p>
-        </div>
-        {% endfor %}
-    </div>
-
-    </section>
-
-    <!-- Séparateur gris -->
-    <div class="section-separator"></div>
-
-    <!-- ============================================ -->
-    <!-- SECTION 4 : Blogues  -->
-    <!-- ============================================ -->
-
-    <section id="Bloques" class="container-fluid px-3">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">{% if site_profile.blog_home_title %}{{ site_profile.blog_home_title }}{% else %}Articles de blog mis en avant{% endif %}</h2>
-            <a href="{% if site_profile.is_default %}{% url 'blogue_list' %}{% else %}/profil/{% profile_url_params site_profile %}/blog/{% endif %}" class="view-all-link">{% if site_profile.blog_view_all_text %}{{ site_profile.blog_view_all_text }}{% else %}Voir tous les articles{% endif %} →</a>
-        </div>
-        {% if site_profile.blog_home_intro %}
-        <div class="section-intro mb-4">
-            {{ site_profile.blog_home_intro|safe }}
-        </div>
-        {% endif %}
-
-    <div class="row g-4">
-        {% for article in articles %}
-        <div class="col-md-4">
-            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
-                {% url 'profile_blogue_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=article.slug as detail_url %}
-            {% else %}
-                {% url 'blogue_detail' slug=article.slug as detail_url %}
-            {% endif %}
-            {% include 'includes/content_card.html' with item=article detail_url=detail_url button_text="Lire l'article" %}
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <p class="text-muted">Aucun article disponible pour le moment.</p>
-        </div>
-        {% endfor %}
-    </div>
-    </section>
-
-    <!-- Séparateur gris -->
-    <div class="section-separator"></div>
-    
     <script>
     // Toggle details for education items
     document.addEventListener('DOMContentLoaded', function () {
@@ -451,85 +721,5 @@
         });
     });
     </script>
-
-    <!-- ============================================ -->
-    <!-- SECTION 5 : SERVICES OFFERTS -->
-    <!-- ============================================ -->
-    <section id="services" class="container-fluid px-3">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">{% if site_profile.services_home_title %}{{ site_profile.services_home_title }}{% else %}Services{% endif %}</h2>
-            <a href="{% if site_profile.is_default %}{% url 'service_list' %}{% else %}/profil/{% profile_url_params site_profile %}/services/{% endif %}" class="view-all-link">{% if site_profile.services_view_all_text %}{{ site_profile.services_view_all_text }}{% else %}Voir tous les services{% endif %} →</a>
-        </div>
-        {% if site_profile.services_home_intro %}
-        <div class="section-intro mb-4">
-            {{ site_profile.services_home_intro|safe }}
-        </div>
-        {% endif %}
-
-        <div class="row g-4">
-            {% for service in services %}
-            <div class="col-md-4">
-                {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
-                    {% url 'profile_service_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=service.slug as detail_url %}
-                {% else %}
-                    {% url 'service_detail' slug=service.slug as detail_url %}
-                {% endif %}
-                {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text="En savoir plus" show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text="Prendre rendez-vous" extra_button_target="_blank" show_image=False show_author=False show_date=False %}
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <p class="text-muted">Aucun service disponible pour le moment.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-
-
-    <!-- Séparateur gris -->
-    <div class="section-separator"></div>
-
-    <!-- ============================================ -->
-    <!-- SECTION 6 : CONTACT -->
-    <!-- ============================================ -->
-    <section id="contact" class="container-fluid px-3">
-        <h2 class="section-title mb-4">Contact</h2>
-
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="contact-form">
-                    <p class="mb-4">
-                        Vous avez un projet en tête ou souhaitez discuter d'une collaboration ?
-                        {% if site_profile and site_profile.email %}
-                        N'hésitez pas à me contacter directement à
-                        <a href="mailto:{{ site_profile.email }}" class="fw-semibold">{{ site_profile.email }}</a>
-                        {% else %}
-                        N'hésitez pas à me contacter directement via le formulaire ci-dessous.
-                        {% endif %}
-                    </p>
-
-                    <form method="post" action="{% url 'contact' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="nom" class="form-label fw-semibold">Nom</label>
-                            <input type="text" name="name" class="form-control" id="nom" placeholder="Votre nom complet">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" class="form-control" id="email" placeholder="votre.email@exemple.com">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="message" class="form-label fw-semibold">Message</label>
-                            <textarea class="form-control" name="message" id="message" rows="5"
-                                placeholder="Votre message..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-custom-primary">Envoyer le message</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
     {% endblock %}
+```
