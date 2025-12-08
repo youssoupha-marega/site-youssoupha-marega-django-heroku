@@ -1,0 +1,42 @@
+{% load utils %}
+
+<!-- Section Projets -->
+<section id="projets" class="container-fluid px-3 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 class="section-title mb-0" style="font-size: 2rem; font-weight: 800; color: #475569; display: flex; align-items: center; gap: 12px;">
+            {% if site_profile.projects_home_image %}
+                <img src="{{ site_profile.projects_home_image.url }}" alt="Projets" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+            {% else %}
+                <i class="fas fa-rocket" style="color: #2c5282;"></i>
+            {% endif %}
+            <span>{% if site_profile.projects_home_title %}{{ site_profile.projects_home_title }}{% else %}Projets mis en avant{% endif %}</span>
+        </h2>
+        <a href="{% if site_profile.is_default %}{% url 'projet_list' %}{% else %}/profil/{% profile_url_params site_profile %}/projets/{% endif %}" 
+           class="btn btn-custom-outline" 
+           style="font-weight: 600; padding: 0.6rem 1.3rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+            {% if site_profile.projects_view_all_text %}{{ site_profile.projects_view_all_text }}{% else %}Voir tous les projets{% endif %}
+            <i class="fas fa-arrow-right" style="font-size: 0.85rem;"></i>
+        </a>
+    </div>
+    {% if site_profile.projects_home_intro %}
+    <div class="section-intro mb-4">
+        {{ site_profile.projects_home_intro|safe }}
+    </div>
+    {% endif %}
+    <div class="row g-4">
+        {% for projet in projets %}
+        <div class="col-md-4">
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_projet_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=projet.slug as detail_url %}
+            {% else %}
+                {% url 'projet_detail' slug=projet.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text=site_profile.projects_detail_button_text %}
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-muted">Aucun projet mis en avant pour le moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>

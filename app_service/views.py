@@ -1,12 +1,39 @@
-from django.shortcuts import render, get_object_or_404
+"""
+Vues pour l'application services.
+
+Utilise les classes de base ProfileBasedListView et ProfileBasedDetailView
+pour éliminer la duplication de code.
+"""
+
+from app_acceuil.base_views import ProfileBasedListView, ProfileBasedDetailView
 from .models import Service
 
-def service_list(request):
-    """Liste de tous les services"""
-    services = Service.objects.filter(is_published=True)
-    return render(request, 'app_service/list.html', {'services': services})
 
-def service_detail(request, slug):
-    """Détail d'un service"""
-    service = get_object_or_404(Service, slug=slug, is_published=True)
-    return render(request, 'app_service/detail.html', {'service': service})
+class ServiceListView(ProfileBasedListView):
+    """Vue de liste des services pour un profil."""
+    
+    model = Service
+    template_name = 'app_service/list.html'
+    context_object_name = 'services'
+    profile_featured_attr = 'published_services'
+
+
+class ServiceDetailView(ProfileBasedDetailView):
+    """Vue de détail d'un service."""
+    
+    model = Service
+    template_name = 'app_service/detail.html'
+    context_object_name = 'service'
+
+
+# Vues fonctionnelles pour compatibilité avec les URLs existantes
+def service_list(request, nom=None, profession=None):
+    """Wrapper fonctionnel pour ServiceListView."""
+    view = ServiceListView.as_view()
+    return view(request, nom=nom, profession=profession)
+
+
+def service_detail(request, slug, nom=None, profession=None):
+    """Wrapper fonctionnel pour ServiceDetailView."""
+    view = ServiceDetailView.as_view()
+    return view(request, slug=slug, nom=nom, profession=profession)

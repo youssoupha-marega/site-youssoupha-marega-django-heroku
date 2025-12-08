@@ -1,49 +1,83 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
-<!-- Titre du projet -->
-<h1 class="mb-4">{{ projet.title }}</h1>
+<div class="container-fluid px-3 mt-4">
+    <article>
+        <!-- Titre du projet -->
+        <h1 class="section-title mb-4" style="font-size: 2.2rem; font-weight: 700; color: #1a202c;">
+            <i class="fas fa-rocket me-2" style="color: #2c5282; font-size: 1.8rem;"></i>
+            {{ projet.title }}
+        </h1>
 
-<!-- Métadonnées du projet -->
-<div class="mb-3">
-    <p class="text-muted mb-2">
-        <strong>Auteur :</strong>
-        <a href="mailto:{{ projet.author_email }}">{{ projet.author_name }}</a>,
-        {{ projet.author_profession }}
-    </p>
-    <p class="text-muted small">
-        Publié le {{ projet.published_at|date:"d M Y" }} | Mis à jour le {{ projet.updated_at|date:"d M Y" }}
-    </p>
-</div>
+        <!-- Métadonnées du projet -->
+        <div class="mb-4" style="padding: 1rem; background: linear-gradient(135deg, rgba(44, 82, 130, 0.03) 0%, rgba(74, 144, 164, 0.03) 100%); border-radius: 10px; border-left: 3px solid rgba(44, 82, 130, 0.3);">
+            <div class="d-flex align-items-center gap-3 mb-2" style="color: #64748b; font-size: 0.95rem;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-user-circle" style="color: #2c5282;"></i>
+                    <strong>Auteur :</strong>
+                    <a href="mailto:{{ projet.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600;"
+                       onmouseover="this.style.textDecoration='underline'" 
+                       onmouseout="this.style.textDecoration='none'">{{ projet.author_name }}</a>
+                    <span>, {{ projet.author_profession }}</span>
+                </div>
+            </div>
+            <div style="color: #94a3b8; font-size: 0.875rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-calendar-alt" style="color: #2c5282;"></i>
+                    Publié le {{ projet.published_at|date:"d M Y" }}
+                </div>
+                <span>|</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-sync-alt" style="color: #2c5282;"></i>
+                    Mis à jour le {{ projet.updated_at|date:"d M Y" }}
+                </div>
+            </div>
+        </div>
 
-<!-- Image principale -->
-{% if projet.main_image %}
-<div class="mb-4">
-    <img src="{{ projet.main_image.url }}" class="img-fluid rounded shadow" alt="{{ projet.title }}"
-        style="max-width: 100%;">
-</div>
-{% endif %}
+        <!-- Image principale -->
+        {% if projet.main_image %}
+        <div class="mb-4" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+            <img src="{{ projet.main_image.url }}" alt="{{ projet.title }}" style="width: 100%; height: auto; display: block;">
+        </div>
+        {% endif %}
 
-<!-- Résumé -->
-<div class="mb-4">
-    <p class="lead">{{ projet.resume }}</p>
-</div>
+        <!-- Résumé -->
+        <div class="mb-4">
+            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ projet.resume }}</p>
+        </div>
 
-<!-- Séparateur -->
-<hr class="my-4">
+        <!-- Séparateur -->
+        <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(44, 82, 130, 0.2) 50%, transparent 100%); margin: 2.5rem 0;"></div>
 
-<!-- Contenu complet -->
-<div class="mb-4">
-    <div class="content-body">
-        {{ projet.content|safe }}
-    </div>
-</div>
+        <!-- Contenu complet -->
+        <div class="mb-5">
+            <div class="content-body" style="line-height: 1.8; color: #475569;">
+                {{ projet.content|safe }}
+            </div>
+        </div>
 
-<!-- Bouton retour -->
-<div class="mt-5">
-    <a href="{% url 'projet_list' %}" class="btn btn-custom-outline">← Retour aux projets</a>
+        <!-- Bouton retour -->
+        <div class="mt-5 mb-4">
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                <a href="{% url 'profile_projet_list' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug %}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 10px;">
+                    <i class="fas fa-arrow-left" style="font-size: 0.85rem;"></i>
+                    {{ site_profile.projects_back_button_text }}
+                </a>
+            {% else %}
+                <a href="{% url 'projet_list' %}" 
+                   class="btn btn-custom-outline" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 10px;">
+                    <i class="fas fa-arrow-left" style="font-size: 0.85rem;"></i>
+                    {{ site_profile.projects_back_button_text }}
+                </a>
+            {% endif %}
+        </div>
+    </article>
 </div>
 
 {% endblock %}

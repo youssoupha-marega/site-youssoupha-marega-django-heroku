@@ -1,41 +1,42 @@
 {% extends "base.html" %}
 {% load static %}
+{% load utils %}
 
 {% block content %}
 
-<div class="container mt-4">
-    <h1 class="section-title mb-4">Services offerts</h1>
+<div class="container-fluid px-3 mt-4">
+    <!-- Cache buster: v2.0 - 2025-12-06 -->
+    <div class="mb-4">
+        <h1 class="section-title" style="font-size: 2rem; font-weight: 800; color: #1a202c; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px;">
+            {% if site_profile.services_page_image %}
+                <img src="{{ site_profile.services_page_image.url }}" alt="Services" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
+            {% else %}
+                <i class="fas fa-briefcase" style="color: #2c5282;"></i>
+            {% endif %}
+            <span>{% if site_profile.services_page_title %}{{ site_profile.services_page_title }}{% else %}Tous les services{% endif %}</span>
+        </h1>
+    </div>
+    
+    {% if site_profile.services_page_intro %}
+    <div class="section-intro mb-4">
+        {{ site_profile.services_page_intro|safe }}
+    </div>
+    {% endif %}
 
-    <div class="row g-4">
+    <div class="row g-3 g-md-4">
         {% for service in services %}
         <div class="col-md-4">
-            <div class="card card-custom">
-                <div class="card-body">
-                    <h2 class="card-title h4 mb-3">{{ service.title }}</h2>
-                    <p class="card-text mb-4">{{ service.resume|striptags }}</p>
-
-                    <div class="d-flex flex-column gap-2">
-                        {% if service.calendly_url %}
-                        <a href="{{ service.calendly_url }}" target="_blank" class="btn btn-custom-primary">
-                            📅 Prendre rendez-vous
-                        </a>
-                        {% endif %}
-                           {% if site_profile and site_profile.email %}
-                           <a href="mailto:{{ site_profile.email }}?subject={{ service.title|urlencode }}" class="btn btn-outline-primary">✉️ Envoyer un mail</a>
-                           {% else %}
-                           <a href="{% url 'contact' %}" class="btn btn-outline-primary">✉️ Nous contacter</a>
-                           {% endif %}
-                        <a href="{% url 'service_detail' service.slug %}" class="btn btn-custom-outline">
-                            En savoir plus
-                        </a>
-                    </div>
-                </div>
-            </div>
+            {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
+                {% url 'profile_service_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=service.slug as detail_url %}
+            {% else %}
+                {% url 'service_detail' slug=service.slug as detail_url %}
+            {% endif %}
+            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text=site_profile.services_detail_button_text show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text=site_profile.services_calendly_button_text extra_button_target="_blank" show_image=False show_author=False show_date=False %}
         </div>
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info">
-                Aucun service disponible pour le moment.
+                Aucun service disponible pour le moment. Revenez bientôt !
             </div>
         </div>
         {% endfor %}

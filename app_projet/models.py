@@ -1,31 +1,37 @@
 from django.db import models
-from django.utils.text import slugify
-
+from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
+from app_acceuil.base_models import PublishableContent, PublishableContentManager
 
-class Project(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Titre")
-    slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug")
-    resume = models.TextField(verbose_name="Résumé")
-    content = RichTextUploadingField(verbose_name="Contenu")
-    published_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de publication")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
-    featured = models.BooleanField(default=False, verbose_name="Projet mis en avant")
-    is_published = models.BooleanField(default=True, verbose_name="Est publié")
-    author_name = models.CharField(max_length=100, verbose_name="Nom de l'auteur", default="Youssoupha Marega")
-    author_email = models.EmailField(verbose_name="Email de l'auteur", default="contact@youssouphamarega.com")
-    author_profession = models.CharField(max_length=100, verbose_name="Profession de l'auteur", default="Data Scientist")
-    main_image = models.ImageField(upload_to='projets/', blank=True, null=True, verbose_name="Image principale")
 
-    class Meta:
+class Project(PublishableContent):
+    """
+    Modèle pour les projets du portfolio.
+    
+    Hérite de PublishableContent pour les champs communs (title, slug, resume,
+    is_published, featured, author_*, dates, etc.).
+    
+    Ajoute uniquement les champs spécifiques aux projets.
+    """
+    
+    # Champs spécifiques aux projets
+    content = RichTextUploadingField(verbose_name="Contenu détaillé")
+    main_image = models.ImageField(
+        upload_to='projets/', 
+        blank=True, 
+        null=True, 
+        verbose_name="Image principale"
+    )
+    github_url = models.URLField(blank=True, verbose_name="Lien GitHub")
+    demo_url = models.URLField(blank=True, verbose_name="Lien démo")
+    
+    objects = PublishableContentManager()
+
+    def get_absolute_url(self):
+        """Retourne l'URL de la page de détail du projet."""
+        return reverse('projet_detail', kwargs={'slug': self.slug})
+
+    class Meta(PublishableContent.Meta):
         verbose_name = "Projet"
         verbose_name_plural = "Projets"
-        ordering = ['-published_at']
-
-    def __str__(self):
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
+        # Hérite ordering = ['-created_at'] de PublishableContent
