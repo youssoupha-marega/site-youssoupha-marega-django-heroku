@@ -29,7 +29,7 @@
             {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
                 {% url 'profile_service_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=service.slug as detail_url %}
             {% else %}
-                {% url 'service_detail' slug=service.slug as detail_url %}
+                {% url 'content:service_detail' slug=service.slug as detail_url %}
             {% endif %}
             {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text=site_profile.services_detail_button_text show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text=site_profile.services_calendly_button_text extra_button_target="_blank" show_image=False show_author=site_profile.services_show_author_home show_author_profession=site_profile.services_show_profession_home show_date=site_profile.services_show_publish_date_home show_update_date=site_profile.services_show_update_date_home %}
         </div>

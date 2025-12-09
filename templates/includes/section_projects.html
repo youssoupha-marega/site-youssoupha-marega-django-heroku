@@ -29,7 +29,7 @@
             {% if site_profile and site_profile.first_name and site_profile.last_name and site_profile.profession %}
                 {% url 'profile_projet_detail' nom=site_profile|profile_nom_slug profession=site_profile|profile_profession_slug slug=projet.slug as detail_url %}
             {% else %}
-                {% url 'projet_detail' slug=projet.slug as detail_url %}
+                {% url 'content:project_detail' slug=projet.slug as detail_url %}
             {% endif %}
             {% include 'includes/content_card.html' with item=projet detail_url=detail_url button_text=site_profile.projects_detail_button_text show_author=site_profile.projects_show_author_home show_author_profession=site_profile.projects_show_profession_home show_date=site_profile.projects_show_publish_date_home show_update_date=site_profile.projects_show_update_date_home %}
         </div>
