@@ -9,33 +9,49 @@
         <!-- En-tête de l'article -->
         <h1 class="section-title mb-4" style="font-size: 2.2rem; font-weight: 700; color: #1a202c;">
             <i class="fas fa-pen-fancy me-2" style="color: #4a90a4; font-size: 1.8rem;"></i>
-            {{ article.title }}
+            {{ article.title|striptags }}
         </h1>
 
         <!-- Métadonnées -->
-        <div class="mb-4" style="padding: 1rem; background: linear-gradient(135deg, rgba(44, 82, 130, 0.03) 0%, rgba(74, 144, 164, 0.03) 100%); border-radius: 10px; border-left: 3px solid rgba(44, 82, 130, 0.3);">
+        {% if site_profile.blog_show_author_detail or site_profile.blog_show_profession_detail or site_profile.blog_show_publish_date_detail or site_profile.blog_show_update_date_detail %}
+        <div class="section-intro mb-4">
+            {% if site_profile.blog_show_author_detail or site_profile.blog_show_profession_detail %}
             <div class="d-flex align-items-center gap-3 mb-2" style="color: #64748b; font-size: 0.95rem;">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <i class="fas fa-user-circle" style="color: #2c5282;"></i>
                     <strong>Auteur :</strong>
+                    {% if site_profile.blog_show_author_detail %}
                     <a href="mailto:{{ article.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600;"
                        onmouseover="this.style.textDecoration='underline'" 
                        onmouseout="this.style.textDecoration='none'">{{ article.author_name }}</a>
-                    <span>, {{ article.author_profession }}</span>
+                    {% endif %}
+                    {% if site_profile.blog_show_profession_detail and article.author_profession %}
+                    <span style="font-size: 1.5em; line-height: 1; margin: 0 4px; display: inline-block; transform: translateY(-2px);">•</span> {{ article.author_profession }}
+                    {% endif %}
                 </div>
             </div>
+            {% endif %}
+            {% if site_profile.blog_show_publish_date_detail or site_profile.blog_show_update_date_detail %}
             <div style="color: #94a3b8; font-size: 0.875rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                {% if site_profile.blog_show_publish_date_detail %}
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <i class="fas fa-calendar-alt" style="color: #2c5282;"></i>
                     Publié le {{ article.published_at|date:"d M Y" }}
                 </div>
+                {% endif %}
+                {% if site_profile.blog_show_publish_date_detail and site_profile.blog_show_update_date_detail %}
                 <span>|</span>
+                {% endif %}
+                {% if site_profile.blog_show_update_date_detail %}
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <i class="fas fa-sync-alt" style="color: #2c5282;"></i>
                     Mis à jour le {{ article.updated_at|date:"d M Y" }}
                 </div>
+                {% endif %}
             </div>
+            {% endif %}
         </div>
+        {% endif %}
 
         <!-- Image principale -->
         {% if article.main_image %}
@@ -46,7 +62,7 @@
 
         <!-- Résumé -->
         <div class="mb-4">
-            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ article.resume }}</p>
+            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ article.resume|safe }}</p>
         </div>
 
         <!-- Séparateur -->

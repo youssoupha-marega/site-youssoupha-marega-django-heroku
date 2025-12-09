@@ -8,13 +8,54 @@
     <article>
         <!-- En-tête du service -->
         <h1 class="section-title mb-4" style="font-size: 2.2rem; font-weight: 700; color: #1a202c;">
-            <i class="fas fa-briefcase me-2" style="color: #2c5282; font-size: 1.8rem;"></i>
-            {{ service.title }}
+            <i class="fas fa-tools me-2" style="color: #744210; font-size: 1.8rem;"></i>
+            {{ service.title|striptags }}
         </h1>
+
+        <!-- Métadonnées du service -->
+        {% if site_profile.services_show_author_detail or site_profile.services_show_profession_detail or site_profile.services_show_publish_date_detail or site_profile.services_show_update_date_detail %}
+        <div class="section-intro mb-4">
+            {% if site_profile.services_show_author_detail or site_profile.services_show_profession_detail %}
+            <div class="d-flex align-items-center gap-3 mb-2" style="color: #64748b; font-size: 0.95rem;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-user-circle" style="color: #2c5282;"></i>
+                    <strong>Auteur :</strong>
+                    {% if site_profile.services_show_author_detail %}
+                    <a href="mailto:{{ service.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600;"
+                       onmouseover="this.style.textDecoration='underline'" 
+                       onmouseout="this.style.textDecoration='none'">{{ service.author_name }}</a>
+                    {% endif %}
+                    {% if site_profile.services_show_profession_detail and service.author_profession %}
+                    <span style="font-size: 1.5em; line-height: 1; margin: 0 4px; display: inline-block; transform: translateY(-2px);">•</span> {{ service.author_profession }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% if site_profile.services_show_publish_date_detail or site_profile.services_show_update_date_detail %}
+            <div style="color: #94a3b8; font-size: 0.875rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                {% if site_profile.services_show_publish_date_detail %}
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-calendar-alt" style="color: #2c5282;"></i>
+                    Publié le {{ service.published_at|date:"d M Y" }}
+                </div>
+                {% endif %}
+                {% if site_profile.services_show_publish_date_detail and site_profile.services_show_update_date_detail %}
+                <span>|</span>
+                {% endif %}
+                {% if site_profile.services_show_update_date_detail %}
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-sync-alt" style="color: #2c5282;"></i>
+                    Mis à jour le {{ service.updated_at|date:"d M Y" }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <!-- Résumé -->
         <div class="mb-4">
-            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ service.resume }}</p>
+            <p class="lead" style="font-size: 1.15rem; line-height: 1.7; color: #475569;">{{ service.resume|safe }}</p>
         </div>
 
         <!-- Séparateur -->

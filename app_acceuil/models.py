@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class SiteProfileManager(models.Manager):
@@ -72,7 +72,7 @@ class SiteProfile(models.Model):
 	medium_url = models.URLField(blank=True, verbose_name=_("Medium"))
 	youtube_url = models.URLField(blank=True, verbose_name=_("YouTube"))
 	profile_photo = models.ImageField(upload_to="profile/", blank=True, null=True, verbose_name=_("Photo de profil"))
-	bio = RichTextField(blank=True, verbose_name=_("Profil (rich text)"))
+	bio = RichTextUploadingField(blank=True, verbose_name=_("Bio"))
 	# Contrôles d'affichage de la section Profil
 	BIO_POSITION_CHOICES = (("left", "Colonne gauche"), ("right", "Colonne droite"))
 	bio_position = models.CharField(max_length=10, choices=BIO_POSITION_CHOICES, default="right", verbose_name=_("Position de la section Profil"))
@@ -90,30 +90,30 @@ class SiteProfile(models.Model):
 
 	# Customizable Projects section titles and content
 	projects_home_title = models.CharField(max_length=200, default="Projets mis en avant", verbose_name=_("Titre section Projets (Accueil)"))
-	projects_home_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction Projets (Accueil)"))
+	projects_home_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction Projets (Accueil)"))
 	projects_navbar_label = models.CharField(max_length=100, default="Projets", verbose_name=_("Label navbar Projets"))
 	projects_page_title = models.CharField(max_length=200, default="Mes Projets", verbose_name=_("Titre page liste Projets"))
-	projects_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Projets"))
+	projects_page_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction page Projets"))
 	projects_view_all_text = models.CharField(max_length=100, default="Voir tous les projets", verbose_name=_("Texte 'Voir tous les projets'"))
 	projects_detail_button_text = models.CharField(max_length=100, default="Voir le projet", verbose_name=_("Texte bouton détail projet"))
 	projects_back_button_text = models.CharField(max_length=100, default="Retour aux projets", verbose_name=_("Texte bouton retour projets"))
 
 	# Customizable Blog section titles and content
 	blog_home_title = models.CharField(max_length=200, default="Articles de blog mis en avant", verbose_name=_("Titre section Blog (Accueil)"))
-	blog_home_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction Blog (Accueil)"))
+	blog_home_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction Blog (Accueil)"))
 	blog_navbar_label = models.CharField(max_length=100, default="Blogue", verbose_name=_("Label navbar Blog"))
 	blog_page_title = models.CharField(max_length=200, default="Articles de blog", verbose_name=_("Titre page liste Blog"))
-	blog_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Blog"))
+	blog_page_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction page Blog"))
 	blog_view_all_text = models.CharField(max_length=100, default="Voir tous les articles", verbose_name=_("Texte 'Voir tous les articles'"))
 	blog_detail_button_text = models.CharField(max_length=100, default="Lire l'article", verbose_name=_("Texte bouton lire article"))
 	blog_back_button_text = models.CharField(max_length=100, default="Retour aux articles", verbose_name=_("Texte bouton retour articles"))
 
 	# Customizable Services section titles and content
 	services_home_title = models.CharField(max_length=200, default="Services", verbose_name=_("Titre section Services (Accueil)"))
-	services_home_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction Services (Accueil)"))
+	services_home_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction Services (Accueil)"))
 	services_navbar_label = models.CharField(max_length=100, default="Services", verbose_name=_("Label navbar Services"))
 	services_page_title = models.CharField(max_length=200, default="Services offerts", verbose_name=_("Titre page liste Services"))
-	services_page_intro = RichTextField(blank=True, verbose_name=_("Texte d'introduction page Services"))
+	services_page_intro = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction page Services"))
 	services_view_all_text = models.CharField(max_length=100, default="Voir tous les services", verbose_name=_("Texte 'Voir tous les services'"))
 	services_detail_button_text = models.CharField(max_length=100, default="En savoir plus", verbose_name=_("Texte bouton détail service"))
 	services_back_button_text = models.CharField(max_length=100, default="Retour aux services", verbose_name=_("Texte bouton retour services"))
@@ -136,7 +136,7 @@ class SiteProfile(models.Model):
 	# Section Contact - Configuration
 	contact_title = models.CharField(max_length=200, blank=True, verbose_name=_("Titre de la section Contact"))
 	contact_title_image = models.ImageField(upload_to='section_images/', blank=True, null=True, verbose_name=_("Image du titre Contact"))
-	contact_intro_text = models.TextField(blank=True, verbose_name=_("Texte d'introduction Contact"))
+	contact_intro_text = RichTextUploadingField(blank=True, verbose_name=_("Texte d'introduction Contact"))
 	contact_name_label = models.CharField(max_length=100, default="Nom complet", verbose_name=_("Label champ Nom"))
 	contact_email_label = models.CharField(max_length=100, default="Adresse email", verbose_name=_("Label champ Email"))
 	contact_company_label = models.CharField(max_length=100, default="Entreprise", verbose_name=_("Label champ Entreprise"))
@@ -149,6 +149,48 @@ class SiteProfile(models.Model):
 	enable_confirmation_email = models.BooleanField(default=True, verbose_name=_("Envoyer un email de confirmation à l'expéditeur"))
 	gmail_app_password = models.CharField(max_length=100, blank=True, verbose_name=_("Mot de passe d'application Gmail"), help_text=_("Requis pour envoyer des emails. Créez-le sur https://myaccount.google.com/apppasswords"))
 
+	# Configuration Projets - Affichage des métadonnées
+	projects_show_author_home = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	projects_show_author_list = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	projects_show_author_detail = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	projects_show_profession_home = models.BooleanField(default=True, verbose_name=_("Profession"))
+	projects_show_profession_list = models.BooleanField(default=True, verbose_name=_("Profession"))
+	projects_show_profession_detail = models.BooleanField(default=True, verbose_name=_("Profession"))
+	projects_show_publish_date_home = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	projects_show_publish_date_list = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	projects_show_publish_date_detail = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	projects_show_update_date_home = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	projects_show_update_date_list = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	projects_show_update_date_detail = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	
+	# Configuration Blog - Affichage des métadonnées
+	blog_show_author_home = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	blog_show_author_list = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	blog_show_author_detail = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	blog_show_profession_home = models.BooleanField(default=True, verbose_name=_("Profession"))
+	blog_show_profession_list = models.BooleanField(default=True, verbose_name=_("Profession"))
+	blog_show_profession_detail = models.BooleanField(default=True, verbose_name=_("Profession"))
+	blog_show_publish_date_home = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	blog_show_publish_date_list = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	blog_show_publish_date_detail = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	blog_show_update_date_home = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	blog_show_update_date_list = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	blog_show_update_date_detail = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	
+	# Configuration Services - Affichage des métadonnées
+	services_show_author_home = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	services_show_author_list = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	services_show_author_detail = models.BooleanField(default=True, verbose_name=_("Auteur"))
+	services_show_profession_home = models.BooleanField(default=True, verbose_name=_("Profession"))
+	services_show_profession_list = models.BooleanField(default=True, verbose_name=_("Profession"))
+	services_show_profession_detail = models.BooleanField(default=True, verbose_name=_("Profession"))
+	services_show_publish_date_home = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	services_show_publish_date_list = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	services_show_publish_date_detail = models.BooleanField(default=True, verbose_name=_("Date pub"))
+	services_show_update_date_home = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	services_show_update_date_list = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+	services_show_update_date_detail = models.BooleanField(default=True, verbose_name=_("Date MAJ"))
+
 	# Relations Many-to-Many pour choisir les contenus à publier par profil
 	# Importation dynamique pour éviter les imports circulaires
 	published_projects = models.ManyToManyField('app_projet.Project', blank=True, related_name='profiles', verbose_name=_("Projets publiés"))
@@ -157,6 +199,15 @@ class SiteProfile(models.Model):
 	featured_articles = models.ManyToManyField('app_blog.BlogPost', blank=True, related_name='featured_in_profiles', verbose_name=_("Articles mis en avant"))
 	published_services = models.ManyToManyField('app_service.Service', blank=True, related_name='profiles', verbose_name=_("Services publiés"))
 	featured_services = models.ManyToManyField('app_service.Service', blank=True, related_name='featured_in_profiles', verbose_name=_("Services mis en avant"))
+
+	# Navigation et layout
+	navbar_position = models.CharField(
+		max_length=10,
+		choices=[('left', 'Gauche'), ('right', 'Droite')],
+		default='left',
+		verbose_name=_("Position de la barre de navigation"),
+		help_text=_("Choisir si la barre de navigation doit être à gauche ou à droite")
+	)
 
 	class Meta:
 		verbose_name = _("Profil du site")
@@ -222,7 +273,7 @@ class Education(models.Model):
 	institution = models.CharField(max_length=255, blank=True, verbose_name=_("Établissement"))
 	icon = models.ImageField(upload_to="education/", blank=True, null=True, verbose_name=_("Icône"))
 	# Détails optionnels remplissables depuis l'admin. Si vide, l'icône œil n'est pas affichée.
-	details = RichTextField(blank=True, null=True, verbose_name=_("Détails de la formation"))
+	details = RichTextUploadingField(blank=True, null=True, verbose_name=_("Détails de la formation"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
 
 	class Meta:
@@ -242,7 +293,7 @@ class Experience(models.Model):
 	company_url = models.URLField(blank=True, verbose_name=_("Lien entreprise"))
 	icon = models.ImageField(upload_to="experience/", blank=True, null=True, verbose_name=_("Icône"))
 	# Détails optionnels pour une expérience ; affichés via l'icône œil
-	details = RichTextField(blank=True, null=True, verbose_name=_("Détails de l'expérience"))
+	details = RichTextUploadingField(blank=True, null=True, verbose_name=_("Détails de l'expérience"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
 
 	class Meta:
@@ -291,7 +342,7 @@ class SectionItem(models.Model):
 	date = models.CharField(max_length=100, blank=True, verbose_name=_("Date / Période (ex: 2023, 2022-2023)"))
 	url = models.URLField(blank=True, verbose_name=_("Lien (optionnel, ex: site de l'entreprise)"))
 	# Détails riches optionnels, similaires à Formation/Expérience
-	details = RichTextField(blank=True, null=True, verbose_name=_("Détails"))
+	details = RichTextUploadingField(blank=True, null=True, verbose_name=_("Détails"))
 	order = models.PositiveIntegerField(default=0, verbose_name=_("Ordre"))
 
 	class Meta:
