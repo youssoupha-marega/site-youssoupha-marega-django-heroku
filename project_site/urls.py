@@ -1,4 +1,3 @@
-
 """
 URL configuration for myproject project.
 
@@ -20,28 +19,35 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from app_content import views as content_views
-from app_projet import views as projet_views
-from app_blog import views as blog_views
-from app_service import views as service_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
     # URLs pour le profil par défaut (à la racine)
     path('', include('app_acceuil.urls')),
-    path('', include('app_content.urls')),  # Unified content app (NEW)
-    path('blogue/', include('app_blog.urls')),
-    path('projets/', include('app_projet.urls')),
-    path('services/', include('app_service.urls')),
+    path('', include('app_content.urls')),  # Unified content app
     
     # URLs pour les profils spécifiques avec paramètres dans le chemin
     # Format: /profil/nom=youssoupha-marega&profession=scientifique-de-donnees/projets/
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/projets/$', projet_views.projet_list, name='profile_projet_list'),
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/projets/(?P<slug>[\w-]+)/$', projet_views.projet_detail, name='profile_projet_detail'),
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/blog/$', blog_views.blogue_list, name='profile_blogue_list'),
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/blog/(?P<slug>[\w-]+)/$', blog_views.blogue_detail, name='profile_blogue_detail'),
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/services/$', service_views.service_list, name='profile_service_list'),
-    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/services/(?P<slug>[\w-]+)/$', service_views.service_detail, name='profile_service_detail'),
+    # Using unified app_content routes
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/projets/$', 
+            content_views.ContentListView.as_view(), {'content_type': 'project'}, 
+            name='profile_projet_list'),
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/projets/(?P<slug>[\w-]+)/$', 
+            content_views.ContentDetailView.as_view(), {'content_type': 'project'}, 
+            name='profile_projet_detail'),
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/blog/$', 
+            content_views.ContentListView.as_view(), {'content_type': 'blog'}, 
+            name='profile_blogue_list'),
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/blog/(?P<slug>[\w-]+)/$', 
+            content_views.ContentDetailView.as_view(), {'content_type': 'blog'}, 
+            name='profile_blogue_detail'),
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/services/$', 
+            content_views.ContentListView.as_view(), {'content_type': 'service'}, 
+            name='profile_service_list'),
+    re_path(r'^profil/nom=(?P<nom>[^&/]+)&profession=(?P<profession>[^/]+)/services/(?P<slug>[\w-]+)/$', 
+            content_views.ContentDetailView.as_view(), {'content_type': 'service'}, 
+            name='profile_service_detail'),
     
     # CKEditor
     path('ckeditor/', include('ckeditor_uploader.urls')),

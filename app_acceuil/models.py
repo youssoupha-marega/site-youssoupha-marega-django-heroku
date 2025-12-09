@@ -193,12 +193,13 @@ class SiteProfile(models.Model):
 
 	# Relations Many-to-Many pour choisir les contenus à publier par profil
 	# Importation dynamique pour éviter les imports circulaires
-	published_projects = models.ManyToManyField('app_projet.Project', blank=True, related_name='profiles', verbose_name=_("Projets publiés"))
-	featured_projects = models.ManyToManyField('app_projet.Project', blank=True, related_name='featured_in_profiles', verbose_name=_("Projets mis en avant"))
-	published_articles = models.ManyToManyField('app_blog.BlogPost', blank=True, related_name='profiles', verbose_name=_("Articles publiés"))
-	featured_articles = models.ManyToManyField('app_blog.BlogPost', blank=True, related_name='featured_in_profiles', verbose_name=_("Articles mis en avant"))
-	published_services = models.ManyToManyField('app_service.Service', blank=True, related_name='profiles', verbose_name=_("Services publiés"))
-	featured_services = models.ManyToManyField('app_service.Service', blank=True, related_name='featured_in_profiles', verbose_name=_("Services mis en avant"))
+	# Updated to use unified Content model from app_content
+	published_projects = models.ManyToManyField('app_content.Content', blank=True, related_name='profiles_projects', verbose_name=_("Projets publiés"))
+	featured_projects = models.ManyToManyField('app_content.Content', blank=True, related_name='featured_in_profiles_projects', verbose_name=_("Projets mis en avant"))
+	published_articles = models.ManyToManyField('app_content.Content', blank=True, related_name='profiles_articles', verbose_name=_("Articles publiés"))
+	featured_articles = models.ManyToManyField('app_content.Content', blank=True, related_name='featured_in_profiles_articles', verbose_name=_("Articles mis en avant"))
+	published_services = models.ManyToManyField('app_content.Content', blank=True, related_name='profiles_services', verbose_name=_("Services publiés"))
+	featured_services = models.ManyToManyField('app_content.Content', blank=True, related_name='featured_in_profiles_services', verbose_name=_("Services mis en avant"))
 
 	# Navigation et layout
 	navbar_position = models.CharField(
