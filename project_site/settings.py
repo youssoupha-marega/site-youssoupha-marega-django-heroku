@@ -51,9 +51,10 @@ INSTALLED_APPS = [
     "cloudinary_storage",
     "cloudinary",
     "app_acceuil", # Application acceuil
-    "app_blog", # Application blog
-    "app_projet", # Application projet
-    "app_service", # Application service
+    "app_content", # Application contenu unifié (NEW)
+    "app_blog", # Application blog (legacy - to be removed)
+    "app_projet", # Application projet (legacy - to be removed)
+    "app_service", # Application service (legacy - to be removed)
     "app_chat", # Application chat
     'ckeditor',
     'ckeditor_uploader',

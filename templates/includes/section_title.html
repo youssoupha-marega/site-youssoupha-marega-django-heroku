@@ -1,0 +1,14 @@
+{% comment %}
+  Composant réutilisable pour les titres de section
+  
+  Usage:
+  {% include "includes/section_title.html" with title="Mes Projets" icon="fa-rocket" %}
+  {% include "includes/section_title.html" with title="Articles" icon="fa-pen-fancy" %}
+{% endcomment %}
+
+<h2 class="section-title mb-0" style="font-size: var(--font-size-xl); font-weight: var(--font-weight-heavy); color: var(--section-title-color); display: flex; align-items: center; gap: 12px;">
+    {% if icon %}
+        <i class="fas {{ icon }}" style="color: var(--section-icon-color); font-size: 1.8rem;"></i>
+    {% endif %}
+    {{ title }}
+</h2>

@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from app_content import views as content_views
 from app_projet import views as projet_views
 from app_blog import views as blog_views
 from app_service import views as service_views
@@ -28,6 +29,7 @@ urlpatterns = [
     
     # URLs pour le profil par défaut (à la racine)
     path('', include('app_acceuil.urls')),
+    path('', include('app_content.urls')),  # Unified content app (NEW)
     path('blogue/', include('app_blog.urls')),
     path('projets/', include('app_projet.urls')),
     path('services/', include('app_service.urls')),
