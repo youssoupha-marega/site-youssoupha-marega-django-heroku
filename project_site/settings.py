@@ -31,6 +31,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.herokuapp.com',  # Autorise tous les sous-domaines herokuapp.com
+    'www.youssouphamarega.com',
+    'youssouphamarega.com',
 ]
 
 # CSRF trusted origins for Heroku
