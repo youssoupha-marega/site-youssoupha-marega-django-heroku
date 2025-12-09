@@ -20,18 +20,13 @@ class ProfileService:
 
         Args:
             site_profile: The SiteProfile instance or None.
-            limit: Maximum number of projects to return if using fallback.
+            limit: Maximum number of projects to return.
 
         Returns:
             QuerySet of Content instances with content_type='project'.
         """
-        if site_profile and site_profile.featured_projects.exists():
-            return site_profile.featured_projects.all()
-        elif site_profile and site_profile.published_projects.exists():
-            return site_profile.published_projects.all()[:limit]
-        else:
-            # Fallback: retourner tous les projets (limités)
-            return Content.objects.filter(content_type='project')[:limit]
+        # Retourner tous les projets (limités)
+        return Content.objects.filter(content_type='project').order_by('-created_at')[:limit]
 
     @staticmethod
     def get_featured_articles(site_profile: Optional[SiteProfile], limit: int = 3):
@@ -40,18 +35,13 @@ class ProfileService:
 
         Args:
             site_profile: The SiteProfile instance or None.
-            limit: Maximum number of articles to return if using fallback.
+            limit: Maximum number of articles to return.
 
         Returns:
             QuerySet of Content instances with content_type='blog'.
         """
-        if site_profile and site_profile.featured_articles.exists():
-            return site_profile.featured_articles.all()
-        elif site_profile and site_profile.published_articles.exists():
-            return site_profile.published_articles.all()[:limit]
-        else:
-            # Fallback: retourner tous les articles (limités)
-            return Content.objects.filter(content_type='blog')[:limit]
+        # Retourner tous les articles (limités)
+        return Content.objects.filter(content_type='blog').order_by('-created_at')[:limit]
 
     @staticmethod
     def get_featured_services(site_profile: Optional[SiteProfile], limit: int = 3):
@@ -60,18 +50,13 @@ class ProfileService:
 
         Args:
             site_profile: The SiteProfile instance or None.
-            limit: Maximum number of services to return if using fallback.
+            limit: Maximum number of services to return.
 
         Returns:
             QuerySet of Content instances with content_type='service'.
         """
-        if site_profile and site_profile.featured_services.exists():
-            return site_profile.featured_services.all()
-        elif site_profile and site_profile.published_services.exists():
-            return site_profile.published_services.all()[:limit]
-        else:
-            # Fallback: retourner tous les services (limités)
-            return Content.objects.filter(content_type='service')[:limit]
+        # Retourner tous les services (limités)
+        return Content.objects.filter(content_type='service').order_by('-created_at')[:limit]
 
     @staticmethod
     def build_profile_context(site_profile: Optional[SiteProfile]) -> Dict[str, Any]:

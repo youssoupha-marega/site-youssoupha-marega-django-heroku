@@ -98,7 +98,6 @@ class SiteProfileAdmin(admin.ModelAdmin):
 	list_filter = ("is_published", "is_default",)
 	readonly_fields = ("profile_preview", "slug", "profile_url_display")
 	search_fields = ("first_name", "last_name", "profession", "email")
-	filter_horizontal = ("published_projects", "featured_projects", "published_articles", "featured_articles", "published_services", "featured_services")
 
 	fieldsets = (
 		("Publication", {"fields": ("is_published", "is_default", "slug", "profile_url_display"), "classes": ("collapse",)} ),
@@ -107,9 +106,6 @@ class SiteProfileAdmin(admin.ModelAdmin):
 		("Liens", {"fields": ("linkedin_url", "github_url", "medium_url", "youtube_url"), "classes": ("collapse",)} ),
 		("Localisation & Bio", {"fields": ("location", "bio"), "classes": ("collapse",)} ),
 		("Affichage Profil (position/titre/image)", {"fields": ("bio_position", "bio_show_title", "bio_title", "bio_title_image"), "classes": ("collapse",)} ),
-		("Projets publiés", {"fields": ("published_projects", "featured_projects"), "classes": ("collapse",)} ),
-		("Articles publiés", {"fields": ("published_articles", "featured_articles"), "classes": ("collapse",)} ),
-		("Services publiés", {"fields": ("published_services", "featured_services"), "classes": ("collapse",)} ),
 		("Section Projets (titres/textes/images)", {"fields": ("projects_display_order", "projects_home_title", "projects_home_intro", "projects_home_image", "projects_navbar_label", "projects_page_title", "projects_page_intro", "projects_page_image", "projects_view_all_text", "projects_detail_button_text", "projects_back_button_text"), "classes": ("collapse",)} ),
 		("Section Projets - Métadonnées (Matrice 4×3)", {"fields": (("projects_show_author_home", "projects_show_author_list", "projects_show_author_detail"), ("projects_show_profession_home", "projects_show_profession_list", "projects_show_profession_detail"), ("projects_show_publish_date_home", "projects_show_publish_date_list", "projects_show_publish_date_detail"), ("projects_show_update_date_home", "projects_show_update_date_list", "projects_show_update_date_detail")), "description": "Colonnes: Accueil | Liste | Détails", "classes": ("collapse",)} ),
 		("Section Blog (titres/textes/images)", {"fields": ("blog_display_order", "blog_home_title", "blog_home_intro", "blog_home_image", "blog_navbar_label", "blog_page_title", "blog_page_intro", "blog_page_image", "blog_view_all_text", "blog_detail_button_text", "blog_back_button_text"), "classes": ("collapse",)} ),
