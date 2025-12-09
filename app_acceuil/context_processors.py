@@ -32,9 +32,9 @@ def menu_items(request):
             
             # Mapping des types de sections vers leurs configurations
             section_config = {
-                'projects': {'name': 'projet_list', 'profile_name': 'profile_projet_list', 'label': projects_label, 'default_path': '/projets/', 'profile_path': '/projets/'},
-                'blog': {'name': 'blogue_list', 'profile_name': 'profile_blogue_list', 'label': blog_label, 'default_path': '/blogue/', 'profile_path': '/blog/'},
-                'services': {'name': 'service_list', 'profile_name': 'profile_service_list', 'label': services_label, 'default_path': '/services/', 'profile_path': '/services/'},
+                'projects': {'name': 'content:projects_list', 'profile_name': 'profile_projet_list', 'label': projects_label, 'default_path': '/projets/', 'profile_path': '/projets/'},
+                'blog': {'name': 'content:blog_list', 'profile_name': 'profile_blogue_list', 'label': blog_label, 'default_path': '/blog/', 'profile_path': '/blog/'},
+                'services': {'name': 'content:services_list', 'profile_name': 'profile_service_list', 'label': services_label, 'default_path': '/services/', 'profile_path': '/services/'},
             }
             
             # Générer les URLs en fonction du profil
@@ -57,16 +57,16 @@ def menu_items(request):
         else:
             items = [
                 {"name": "acceuil", "label": "Accueil", "url": "/"},
-                {"name": "service_list", "label": "Services", "url": "/services/"},
-                {"name": "projet_list", "label": "Projets", "url": "/projets/"},
-                {"name": "blogue_list", "label": "Blogue", "url": "/blogue/"},
+                {"name": "content:services_list", "label": "Services", "url": "/services/"},
+                {"name": "content:projects_list", "label": "Projets", "url": "/projets/"},
+                {"name": "content:blog_list", "label": "Blogue", "url": "/blog/"},
             ]
     except (OperationalError, DatabaseError):
         items = [
             {"name": "acceuil", "label": "Accueil", "url": "/"},
-            {"name": "service_list", "label": "Services", "url": "/services/"},
-            {"name": "projet_list", "label": "Projets", "url": "/projets/"},
-            {"name": "blogue_list", "label": "Blogue", "url": "/blogue/"},
+            {"name": "content:services_list", "label": "Services", "url": "/services/"},
+            {"name": "content:projects_list", "label": "Projets", "url": "/projets/"},
+            {"name": "content:blog_list", "label": "Blogue", "url": "/blog/"},
         ]
     
     return {'menu_items': items}

@@ -14,10 +14,7 @@ class SiteProfileManager(models.Manager):
 			QuerySet: Optimized queryset with prefetch_related for all M2M relationships.
 		"""
 		return self.prefetch_related(
-			'sections__items',
-			'featured_projects', 'published_projects',
-			'featured_articles', 'published_articles',
-			'featured_services', 'published_services'
+			'sections__items'
 		).filter(is_published=True)
 	
 	def get_default_profile(self):
