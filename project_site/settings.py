@@ -38,6 +38,8 @@ ALLOWED_HOSTS = [
 # CSRF trusted origins for Heroku
 CSRF_TRUSTED_ORIGINS = [
     'https://*.herokuapp.com',
+    'https://youssouphamarega.com',
+    'https://www.youssouphamarega.com',
 ]
 
 
