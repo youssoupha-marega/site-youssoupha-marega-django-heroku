@@ -31,7 +31,7 @@
             {% else %}
                 {% url 'service_detail' slug=service.slug as detail_url %}
             {% endif %}
-            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text=site_profile.services_detail_button_text show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text=site_profile.services_calendly_button_text extra_button_target="_blank" show_image=False show_author=False show_date=False %}
+            {% include 'includes/content_card.html' with item=service detail_url=detail_url button_text=site_profile.services_detail_button_text show_extra_button=service.calendly_url extra_button_url=service.calendly_url extra_button_text=site_profile.services_calendly_button_text extra_button_target="_blank" show_image=False show_author=site_profile.services_show_author_list show_author_profession=site_profile.services_show_profession_list show_date=site_profile.services_show_publish_date_list show_update_date=site_profile.services_show_update_date_list %}
         </div>
         {% empty %}
         <div class="col-12">

@@ -1,8 +1,20 @@
 from django.contrib import admin
+from django import forms
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .models import Service
+
+
+class ServiceForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget(), required=False, label="Description complète du service")
+    
+    class Meta:
+        model = Service
+        fields = '__all__'
+
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
+    form = ServiceForm
     list_display = ('title', 'author_name', 'published_at', 'updated_at')
     list_filter = ('published_at', 'author_name')
     search_fields = ('title', 'resume', 'content')

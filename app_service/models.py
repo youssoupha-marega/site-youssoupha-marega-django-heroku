@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
 from app_acceuil.base_models import PublishableContent, PublishableContentManager
 
 
@@ -14,7 +15,7 @@ class Service(PublishableContent):
     """
     
     # Champs spécifiques aux services
-    content = models.TextField(verbose_name="Description complète du service")
+    content = RichTextUploadingField(verbose_name="Description complète du service")
     calendly_url = models.URLField(
         max_length=500, 
         blank=True, 

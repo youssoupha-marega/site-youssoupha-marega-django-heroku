@@ -6,6 +6,7 @@ Project, BlogPost et Service.
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class PublishableContent(models.Model):
@@ -22,7 +23,7 @@ class PublishableContent(models.Model):
     
     title = models.CharField(max_length=200, verbose_name=_("Titre"))
     slug = models.SlugField(max_length=200, unique=True, verbose_name=_("Slug"))
-    resume = models.TextField(verbose_name=_("Résumé"))
+    resume = RichTextUploadingField(verbose_name=_("Résumé"))
     
     # Métadonnées
     author_name = models.CharField(

@@ -65,25 +65,32 @@ Exemples d'utilisation:
         {% endif %}
         
         {# Métadonnées: auteur et date avec icônes modernes #}
-        {% if show_author|default:True or show_date|default:True %}
-        <div class="mb-3" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--text-secondary, #64748b); font-size: 0.875rem;">
-            {% if show_author|default:True %}
-            <div style="display: flex; align-items: center; gap: 6px;">
+        {% if show_author or show_date or show_update_date %}
+        <div class="mb-3" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            {% if show_author %}
+            <div style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 0.95rem;">
                 <i class="fas fa-user-circle" style="color: #2c5282;"></i>
-                <a href="mailto:{{ item.author_email }}" style="color: #4a5568; text-decoration: none; font-weight: 600; transition: color 0.3s ease;"
-                   onmouseover="this.style.color='#2c5282'" 
-                   onmouseout="this.style.color='#4a5568';">
+                <a href="mailto:{{ item.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600; transition: color 0.3s ease;"
+                   onmouseover="this.style.textDecoration='underline'" 
+                   onmouseout="this.style.textDecoration='none';">
                     {{ item.author_name }}
                 </a>
-                {% if item.author_profession %}
-                <span style="color: #94a3b8;">• {{ item.author_profession }}</span>
+                {% if show_author_profession and item.author_profession %}
+                <span style="font-size: 1.5em; line-height: 1; margin: 0 4px; display: inline-block; transform: translateY(-2px);">•</span>
+                <span style="color: #64748b; font-size: 0.95rem;">{{ item.author_profession }}</span>
                 {% endif %}
             </div>
             {% endif %}
-            {% if show_date|default:True and item.published_at %}
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <i class="fas fa-calendar-alt" style="color: #4a90a4;"></i>
+            {% if show_date and item.published_at %}
+            <div style="display: flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 0.875rem;">
+                <i class="fas fa-calendar-alt" style="color: #2c5282;"></i>
                 <span>{{ item.published_at|date:"d M Y" }}</span>
+            </div>
+            {% endif %}
+            {% if show_update_date and item.updated_at %}
+            <div style="display: flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 0.875rem;">
+                <i class="fas fa-sync-alt" style="color: #2c5282;"></i>
+                <span>{{ item.updated_at|date:"d M Y" }}</span>
             </div>
             {% endif %}
         </div>
@@ -93,9 +100,9 @@ Exemples d'utilisation:
         {% if item.resume %}
         <p class="card-text mb-4" style="color: var(--text-secondary, #64748b); line-height: 1.7; min-height: 60px;">
             {% if truncate_words %}
-                {{ item.resume|striptags|truncatewords:truncate_words }}
+                {{ item.resume|safe }}
             {% else %}
-                {{ item.resume|striptags|truncatewords:20 }}
+                {{ item.resume|safe }}
             {% endif %}
         </p>
         {% endif %}

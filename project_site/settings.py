@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,11 +31,15 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.herokuapp.com',  # Autorise tous les sous-domaines herokuapp.com
+    'www.youssouphamarega.com',
+    'youssouphamarega.com',
 ]
 
 # CSRF trusted origins for Heroku
 CSRF_TRUSTED_ORIGINS = [
     'https://*.herokuapp.com',
+    'https://youssouphamarega.com',
+    'https://www.youssouphamarega.com',
 ]
 
 
@@ -46,6 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     "app_acceuil", # Application acceuil
     "app_blog", # Application blog
     "app_projet", # Application projet
@@ -59,9 +67,19 @@ CKEDITOR_UPLOAD_PATH = "uploads/"
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'full',
+        'toolbar': [
+            ['Format', 'Bold', 'Italic', 'Underline', '-', 'RemoveFormat'],
+            ['FontSize', 'TextColor', 'BGColor'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
+            ['Source'],
+        ],
         'height': 300,
         'width': '100%',
+        'removePlugins': 'stylesheetparser',
+        'allowedContent': True,
     },
 }
 
@@ -155,6 +173,22 @@ STATICFILES_DIRS = [BASE_DIR / "app_acceuil" / "static"] # (Nouveau Ajout)
 
 # Dossier où collectstatic va tout mettre (Nouveau Ajout)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Cloudinary Configuration - Initialize early for all environments
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'dhtuftwkj'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY', '735469273677619'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'qxEcRPEG8Ml4CRwrFt3cW_NJBOg'),
+)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dhtuftwkj'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '735469273677619'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'qxEcRPEG8Ml4CRwrFt3cW_NJBOg'),
+}
+
+# Always use Cloudinary for file storage (development & production)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
