@@ -31,6 +31,36 @@ body {
 }
 
 /* ============================================ */
+/* NAVBAR LAYOUT UTILITIES                      */
+/* ============================================ */
+
+.navbar-spacer {
+    flex: 1;
+}
+
+.navbar-spacer-left {
+    flex: 0 !important;
+    width: 0 !important;
+}
+
+.navbar-left-layout .navbar-brand-right {
+    justify-content: flex-end;
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 1rem;
+    text-align: right;
+}
+
+.navbar-left-layout .navbar-brand-right span {
+    text-align: right;
+}
+
+.navbar-left-layout .navbar-brand-right img {
+    margin-right: 0;
+    margin-left: 0.75rem;
+}
+
+/* ============================================ */
 /* NAVBAR RESPONSIVE - MOBILE FIRST            */
 /* ============================================ */
 
