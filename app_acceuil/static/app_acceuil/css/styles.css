@@ -60,6 +60,45 @@ body {
     margin-left: 0.75rem;
 }
 
+/* Groupement des métadonnées (auteur, profession, dates) */
+
+.meta-info-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+.meta-info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    row-gap: 4px;
+    color: inherit;
+}
+
+.meta-info-item.meta-date {
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.meta-info-item.meta-profession {
+    color: #64748b;
+}
+
+.meta-info-item.meta-profession::before {
+    content: '•';
+    font-size: 1.5em;
+    line-height: 1;
+    margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    transform: translateY(-2px);
+}
+
 /* ============================================ */
 /* NAVBAR RESPONSIVE - MOBILE FIRST            */
 /* ============================================ */
