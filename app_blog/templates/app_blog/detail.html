@@ -15,41 +15,35 @@
         <!-- Métadonnées -->
         {% if site_profile.blog_show_author_detail or site_profile.blog_show_profession_detail or site_profile.blog_show_publish_date_detail or site_profile.blog_show_update_date_detail %}
         <div class="section-intro mb-4">
-            {% if site_profile.blog_show_author_detail or site_profile.blog_show_profession_detail %}
-            <div class="d-flex align-items-center gap-3 mb-2" style="color: #64748b; font-size: 0.95rem;">
-                <div style="display: flex; align-items: center; gap: 6px;">
+            <div class="meta-info-group">
+                {% if site_profile.blog_show_author_detail or site_profile.blog_show_profession_detail %}
+                <div class="meta-info-item meta-author">
                     <i class="fas fa-user-circle" style="color: #2c5282;"></i>
-                    <strong>Auteur :</strong>
                     {% if site_profile.blog_show_author_detail %}
-                    <a href="mailto:{{ article.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600;"
-                       onmouseover="this.style.textDecoration='underline'" 
-                       onmouseout="this.style.textDecoration='none'">{{ article.author_name }}</a>
-                    {% endif %}
-                    {% if site_profile.blog_show_profession_detail and article.author_profession %}
-                    <span style="font-size: 1.5em; line-height: 1; margin: 0 4px; display: inline-block; transform: translateY(-2px);">•</span> {{ article.author_profession }}
+                        <a href="mailto:{{ article.author_email }}" style="color: #2c5282; text-decoration: none; font-weight: 600;"
+                           onmouseover="this.style.textDecoration='underline'"
+                           onmouseout="this.style.textDecoration='none'">{{ article.author_name }}</a>
                     {% endif %}
                 </div>
-            </div>
-            {% endif %}
-            {% if site_profile.blog_show_publish_date_detail or site_profile.blog_show_update_date_detail %}
-            <div style="color: #94a3b8; font-size: 0.875rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                {% if site_profile.blog_show_publish_date_detail %}
-                <div style="display: flex; align-items: center; gap: 6px;">
+                {% if site_profile.blog_show_author_detail and site_profile.blog_show_profession_detail and article.author_profession %}
+                <div class="meta-info-item meta-profession">
+                    <span>{{ article.author_profession }}</span>
+                </div>
+                {% endif %}
+                {% endif %}
+                {% if site_profile.blog_show_publish_date_detail and article.published_at %}
+                <div class="meta-info-item meta-date">
                     <i class="fas fa-calendar-alt" style="color: #2c5282;"></i>
-                    Publié le {{ article.published_at|date:"d M Y" }}
+                    <span>{{ article.published_at|date:"d M Y" }}</span>
                 </div>
                 {% endif %}
-                {% if site_profile.blog_show_publish_date_detail and site_profile.blog_show_update_date_detail %}
-                <span>|</span>
-                {% endif %}
-                {% if site_profile.blog_show_update_date_detail %}
-                <div style="display: flex; align-items: center; gap: 6px;">
+                {% if site_profile.blog_show_update_date_detail and article.updated_at %}
+                <div class="meta-info-item meta-date">
                     <i class="fas fa-sync-alt" style="color: #2c5282;"></i>
-                    Mis à jour le {{ article.updated_at|date:"d M Y" }}
+                    <span>{{ article.updated_at|date:"d M Y" }}</span>
                 </div>
                 {% endif %}
             </div>
-            {% endif %}
         </div>
         {% endif %}
 
@@ -93,6 +87,7 @@
                 </a>
             {% endif %}
         </div>
+
     </article>
 </div>
 
