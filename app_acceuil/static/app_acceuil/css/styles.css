@@ -30,6 +30,58 @@ body {
     line-height: 1.6;
 }
 
+/* ============================================ */
+/* NAVBAR RESPONSIVE - MOBILE FIRST            */
+/* ============================================ */
+
+/* Force le menu à rester collapsé sur mobile et tablette */
+@media (max-width: 991px) {
+    /* Affiche toujours le bouton hamburger */
+    .navbar-toggler {
+        display: block !important;
+    }
+    
+    /* Cache le menu par défaut sur mobile */
+    .navbar-collapse {
+        display: none !important;
+    }
+    
+    /* Affiche le menu seulement quand il est ouvert (classe .show ajoutée par Bootstrap) */
+    .navbar-collapse.show {
+        display: block !important;
+    }
+    
+    /* Style du menu déroulant sur mobile */
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(44, 82, 130, 0.1);
+        padding: 1rem;
+        z-index: 1000;
+    }
+    
+    /* Les liens de navigation en colonne sur mobile */
+    .navbar-nav {
+        flex-direction: column;
+        gap: 0.5rem !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Ajuste les liens pour mobile */
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem !important;
+        width: 100%;
+        text-align: left;
+    }
+}
+
 /* Séparateur de section minimaliste */
 .section-separator {
     height: 1px;
