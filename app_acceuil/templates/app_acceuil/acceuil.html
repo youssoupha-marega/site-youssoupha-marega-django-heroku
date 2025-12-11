@@ -6,8 +6,38 @@
 
 <style>
     /* Grid wrapper moderne */
-    .grid-wrapper {
+    .profile-layout {
+        --profile-grid-row-height: 12px;
         margin-top: 2rem;
+        display: grid;
+        gap: 1.5rem;
+        grid-auto-flow: dense;
+        grid-auto-rows: var(--profile-grid-row-height);
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        align-items: start;
+    }
+
+    @media (max-width: 991px) {
+        .profile-layout {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+    }
+
+    .profile-sidebar,
+    .profile-card {
+        break-inside: avoid;
+    }
+
+    .profile-sidebar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .profile-card .portfolio-card {
+        height: 100%;
     }
 
     /* Items d'éducation/expérience avec design moderne */
@@ -401,10 +431,10 @@
 <!-- ============================================ -->
 <div class="container-fluid px-3 mt-4">
 
-    <div class="row align-items-start">
+    <div class="profile-layout">
 
         <!-- Colonne gauche : photo + infos avec effet moderne -->
-        <div class="col-md-4 text-center">
+        <div class="profile-sidebar text-center">
 
             {% if site_profile and site_profile.profile_photo %}
             <div class="position-relative d-inline-block mb-3">
@@ -469,7 +499,7 @@
             </div>
 
             {# Bio déplacée à gauche si configurée #}
-            {% if site_profile and site_profile.bio and site_profile.bio_position == 'left' %}
+            {% if site_profile and site_profile.bio_is_active and site_profile.bio and site_profile.bio_position == 'left' %}
             <div class="bio-section animate-fade-in animate-delay-4" style="margin-top: 0.5rem;">
                 {% if site_profile.bio_show_title %}
                 <h3 class="mb-3" style="font-size: 1.3rem; font-weight: 700; color: #1a202c; text-align: left; display: flex; align-items: center; gap: 12px;">
@@ -483,14 +513,10 @@
             </div>
             {% endif %}
         </div>
-
-        <!-- Colonne droite : Profil + grille -->
-        <div class="col-md-8">
-
-            <!-- Section Bio uniquement si elle n'est PAS à gauche -->
-            {% if site_profile and site_profile.bio_position != 'left' %}
-            <div class="bio-section animate-fade-in">
-                {% if site_profile and site_profile.bio_show_title %}
+        {% if site_profile and site_profile.bio_is_active and site_profile.bio_position != 'left' %}
+        <div class="profile-card animate-fade-in">
+            <div class="bio-section">
+                {% if site_profile.bio_show_title %}
                 <h1 class="mb-3" style="color: #1a202c; font-weight: 700; display: flex; align-items: center; gap: 12px;">
                     {% if site_profile.bio_title_image %}
                     <img src="{{ site_profile.bio_title_image.url }}" alt="{{ site_profile.bio_title|default:'Profil' }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px;">
@@ -499,7 +525,7 @@
                 </h1>
                 {% endif %}
 
-                {% if site_profile and site_profile.bio %}
+                {% if site_profile.bio %}
                 <div>{{ site_profile.bio|safe }}</div>
                 {% else %}
                 <p class="mb-2">
@@ -513,9 +539,11 @@
                 </p>
                 {% endif %}
             </div>
-            {% elif not site_profile or not site_profile.bio %}
-            {# Afficher la bio par défaut uniquement si pas de site_profile #}
-            <div class="bio-section animate-fade-in">
+        </div>
+        {% elif not site_profile %}
+        {# Afficher la bio par défaut uniquement si pas de site_profile #}
+        <div class="profile-card animate-fade-in">
+            <div class="bio-section">
                 <p class="mb-2">
                     Je suis data scientist spécialisé en modélisation statistique,
                     prévision de séries temporelles et MLOps.
@@ -526,160 +554,165 @@
                     énergie, eau potable, risques, optimisation et automatisation.
                 </p>
             </div>
-            {% endif %}
+        </div>
+        {% elif site_profile and site_profile.bio_is_active and not site_profile.bio %}
+        {# Afficher la bio par défaut uniquement si pas de site_profile #}
+        <div class="profile-card animate-fade-in">
+            <div class="bio-section">
+                <p class="mb-2">
+                    Je suis data scientist spécialisé en modélisation statistique,
+                    prévision de séries temporelles et MLOps.
+                </p>
 
-            <!-- ============================================ -->
-            <!-- SECTION 2 : GRILLE 3×2 -->
-            <!-- ============================================ -->
-            <div class="grid-wrapper">
-                <div class="row g-2">
+                <p class="mb-0">
+                    Je travaille sur des projets combinant données, IA et impact opérationnel :
+                    énergie, eau potable, risques, optimisation et automatisation.
+                </p>
+            </div>
+        </div>
+        {% endif %}
 
-                    <!-- Sections dynamiques (Toutes les sections : Formation, Expérience, Compétences, Stack, etc.) -->
-                    {% if site_profile and site_profile.sections.exists %}
-                        {% for section in site_profile.sections.all %}
-                            {% if section.is_active %}
-                                <div class="col-md-6 animate-fade-in">
-                                    <div class="portfolio-card h-100">
-                                        <h3 class="section-heading" style="display: flex; align-items: center; gap: 12px;">
-                                            {% if section.title_image %}
-                                                <img src="{{ section.title_image.url }}" alt="{{ section.title }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
-                                            {% elif section.icon %}
-                                                <i class="{{ section.icon }}"></i>
-                                            {% else %}
-                                                <i class="fas fa-layer-group"></i>
-                                            {% endif %}
-                                            <span>{{ section.title }}</span>
-                                        </h3>
-                                        <div class="education-list">
-                                            {% for item in section.items.all %}
-                                                <div class="education-item">
-                                                    {% if item.icon %}
-                                                    <div class="edu-icon">
-                                                        <img src="{{ item.icon.url }}" alt="{{ item.title }}" class="edu-img">
-                                                    </div>
-                                                    {% endif %}
-                                                    <div>
-                                                        <div class="edu-title">{{ item.title }}{% if item.date %}, <span class="text-muted edu-year">{{ item.date }}</span>{% endif %}
-                                                            {% if item.details %}
-                                                                <button class="btn-eye btn-eye-inline" data-target="#section-item-details-{{ item.id }}" aria-expanded="false" title="Voir les détails">
-                                                                    <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
-                                                                        <circle cx="8" cy="8" r="3"/>
-                                                                    </svg>
-                                                                    <svg class="icon-eye-slash" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
-                                                                        <circle cx="8" cy="8" r="3"/>
-                                                                        <path d="M2 2l12 12"/>
-                                                                    </svg>
-                                                                </button>
-                                                            {% endif %}
-                                                        </div>
-                                                        {% if item.subtitle %}
-                                                            <div class="edu-institution">
-                                                                {% if item.url %}
-                                                                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
-                                                                        {{ item.subtitle }}
-                                                                    </a>
-                                                                {% else %}
-                                                                    {{ item.subtitle }}
-                                                                {% endif %}
-                                                            </div>
-                                                        {% endif %}
-                                                        {% if item.details %}
-                                                            <div id="section-item-details-{{ item.id }}" class="edu-details mt-2" style="display:none;">
-                                                                {{ item.details|safe }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
+        <!-- Sections dynamiques (Toutes les sections : Formation, Expérience, Compétences, Stack, etc.) -->
+        {% if site_profile and site_profile.sections.exists %}
+            {% for section in site_profile.sections.all %}
+                {% if section.is_active %}
+                <div class="profile-card animate-fade-in">
+                    <div class="portfolio-card h-100">
+                        <h3 class="section-heading" style="display: flex; align-items: center; gap: 12px;">
+                            {% if section.title_image %}
+                                <img src="{{ section.title_image.url }}" alt="{{ section.title }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                            {% elif section.icon %}
+                                <i class="{{ section.icon }}"></i>
+                            {% else %}
+                                <i class="fas fa-layer-group"></i>
                             {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <!-- Fallback statique si aucune section n'est configurée -->
-                        <div class="col-md-6 animate-fade-in">
-                            <div class="portfolio-card h-100">
-                                <h3 class="section-heading">
-                                    <i class="fas fa-brain me-2"></i>Compétences
-                                </h3>
-                                <div class="education-list">
-                                    <div class="education-item">
-                                        <div class="edu-icon">
-                                            <i class="fas fa-chart-line"></i>
+                            <span>{{ section.title }}</span>
+                        </h3>
+                        <div class="education-list">
+                            {% for item in section.items.all %}
+                                <div class="education-item">
+                                    {% if item.icon %}
+                                    <div class="edu-icon">
+                                        <img src="{{ item.icon.url }}" alt="{{ item.title }}" class="edu-img">
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="edu-title">{{ item.title }}{% if item.date %}, <span class="text-muted edu-year">{{ item.date }}</span>{% endif %}
+                                            {% if item.details %}
+                                                <button class="btn-eye btn-eye-inline" data-target="#section-item-details-{{ item.id }}" aria-expanded="false" title="Voir les détails">
+                                                    <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
+                                                        <circle cx="8" cy="8" r="3"/>
+                                                    </svg>
+                                                    <svg class="icon-eye-slash" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/>
+                                                        <circle cx="8" cy="8" r="3"/>
+                                                        <path d="M2 2l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            {% endif %}
                                         </div>
-                                        <div>
-                                            <div class="edu-title">Data Science & ML</div>
-                                        </div>
+                                        {% if item.subtitle %}
+                                            <div class="edu-institution">
+                                                {% if item.url %}
+                                                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+                                                        {{ item.subtitle }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ item.subtitle }}
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        {% if item.details %}
+                                            <div id="section-item-details-{{ item.id }}" class="edu-details mt-2" style="display:none;">
+                                                {{ item.details|safe }}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <!-- Fallback statique si aucune section n'est configurée -->
+            <div class="profile-card animate-fade-in">
+                <div class="portfolio-card h-100">
+                    <h3 class="section-heading">
+                        <i class="fas fa-brain me-2"></i>Compétences
+                    </h3>
+                    <div class="education-list">
+                        <div class="education-item">
+                            <div class="edu-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <div class="edu-title">Data Science & ML</div>
                             </div>
                         </div>
-
-                        <div class="col-md-6 animate-fade-in animate-delay-1">
-                            <div class="portfolio-card h-100">
-                                <h3 class="section-heading">
-                                    <i class="fas fa-code me-2"></i>Stack techniques
-                                </h3>
-                                <div class="education-list">
-                                    <div class="education-item">
-                                        <div class="edu-icon">
-                                            <i class="fab fa-python"></i>
-                                        </div>
-                                        <div>
-                                            <div class="edu-title">Programmation</div>
-                                            <div class="edu-institution">Python, SQL, R</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 animate-fade-in animate-delay-2">
-                            <div class="portfolio-card h-100">
-                                <h3 class="section-heading">
-                                    <i class="fas fa-lightbulb me-2"></i>Intérêts
-                                </h3>
-                                <div class="education-list">
-                                    <div class="education-item">
-                                        <div class="edu-icon">
-                                            <i class="fas fa-project-diagram"></i>
-                                        </div>
-                                        <div>
-                                            <div class="edu-title">Time Series Forecasting</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 animate-fade-in animate-delay-3">
-                            <div class="portfolio-card h-100">
-                                <h3 class="section-heading">
-                                    <i class="fas fa-star me-2"></i>Valeurs
-                                </h3>
-                                <div class="education-list">
-                                    <div class="education-item">
-                                        <div class="edu-icon">
-                                            <i class="fas fa-trophy"></i>
-                                        </div>
-                                        <div>
-                                            <div class="edu-title">Excellence technique</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
+                    </div>
                 </div>
             </div>
 
-        </div> <!-- fin col-md-8 -->
+            <div class="profile-card animate-fade-in animate-delay-1">
+                <div class="portfolio-card h-100">
+                    <h3 class="section-heading">
+                        <i class="fas fa-code me-2"></i>Stack techniques
+                    </h3>
+                    <div class="education-list">
+                        <div class="education-item">
+                            <div class="edu-icon">
+                                <i class="fab fa-python"></i>
+                            </div>
+                            <div>
+                                <div class="edu-title">Programmation</div>
+                                <div class="edu-institution">Python, SQL, R</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    </div> <!-- fin row -->
+            <div class="profile-card animate-fade-in animate-delay-2">
+                <div class="portfolio-card h-100">
+                    <h3 class="section-heading">
+                        <i class="fas fa-lightbulb me-2"></i>Intérêts
+                    </h3>
+                    <div class="education-list">
+                        <div class="education-item">
+                            <div class="edu-icon">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div>
+                                <div class="edu-title">Time Series Forecasting</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card animate-fade-in animate-delay-3">
+                <div class="portfolio-card h-100">
+                    <h3 class="section-heading">
+                        <i class="fas fa-star me-2"></i>Valeurs
+                    </h3>
+                    <div class="education-list">
+                        <div class="education-item">
+                            <div class="edu-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div>
+                                <div class="edu-title">Excellence technique</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div> <!-- fin profile-layout -->
 
     <!-- ============================================ -->
     <!-- SECTIONS DYNAMIQUES (ordre configurable) -->
@@ -700,14 +733,29 @@
     {% endfor %}
 
     <script>
-    // Toggle details for education items
+    function layoutProfileGrid() {
+        var grid = document.querySelector('.profile-layout');
+        if (!grid) { return; }
+
+        var styles = window.getComputedStyle(grid);
+        var gap = parseFloat(styles.gap || styles.gridRowGap || 0) || 0;
+        var baseRowHeight = parseFloat(styles.getPropertyValue('--profile-grid-row-height')) || 12;
+
+        grid.querySelectorAll('.profile-sidebar, .profile-card').forEach(function (item) {
+            item.style.gridRowEnd = 'span ' + Math.ceil((item.getBoundingClientRect().height + gap) / (baseRowHeight + gap));
+        });
+    }
+
+    // Toggle details for education items + refresh masonry layout
     document.addEventListener('DOMContentLoaded', function () {
+        layoutProfileGrid();
+
         document.querySelectorAll('.btn-eye').forEach(function(btn){
             btn.addEventListener('click', function(){
                 var target = btn.getAttribute('data-target');
-                if(!target) return;
+                if(!target) { return; }
                 var el = document.querySelector(target);
-                if(!el) return;
+                if(!el) { return; }
                 var hidden = (getComputedStyle(el).display === 'none');
                 el.style.display = hidden ? 'block' : 'none';
                 btn.setAttribute('aria-expanded', hidden ? 'true' : 'false');
@@ -717,8 +765,25 @@
                 } else {
                     btn.classList.remove('active');
                 }
+
+                requestAnimationFrame(layoutProfileGrid);
             });
         });
+
+        window.addEventListener('load', layoutProfileGrid);
+        window.addEventListener('resize', function(){
+            requestAnimationFrame(layoutProfileGrid);
+        });
+
+        var grid = document.querySelector('.profile-layout');
+        if (grid && 'ResizeObserver' in window) {
+            var resizeObserver = new ResizeObserver(function () {
+                layoutProfileGrid();
+            });
+            grid.querySelectorAll('.profile-sidebar, .profile-card').forEach(function (item) {
+                resizeObserver.observe(item);
+            });
+        }
     });
     </script>
     {% endblock %}
