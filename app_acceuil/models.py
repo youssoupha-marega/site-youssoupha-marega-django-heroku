@@ -75,6 +75,7 @@ class SiteProfile(models.Model):
 	bio = RichTextUploadingField(blank=True, verbose_name=_("Bio"))
 	# Contrôles d'affichage de la section Profil
 	BIO_POSITION_CHOICES = (("left", "Colonne gauche"), ("right", "Colonne droite"))
+	bio_is_active = models.BooleanField(default=True, verbose_name=_("Afficher la carte Profil"))
 	bio_position = models.CharField(max_length=10, choices=BIO_POSITION_CHOICES, default="right", verbose_name=_("Position de la section Profil"))
 	bio_show_title = models.BooleanField(default=True, verbose_name=_("Afficher le titre de la section Profil"))
 	bio_title = models.CharField(max_length=200, blank=True, verbose_name=_("Titre de la section Profil (facultatif)"))

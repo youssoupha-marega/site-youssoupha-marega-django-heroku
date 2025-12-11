@@ -1,6 +1,7 @@
 # Activation environnemnt virtuelle
 C:\Users\ymarega\...\django_docker_app>
-venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
 
 ## lancer le serveur

@@ -106,7 +106,7 @@ class SiteProfileAdmin(admin.ModelAdmin):
 		("Infos professionnelles", {"fields": ("profession", "current_employer", "current_employer_url"), "classes": ("collapse",)} ),
 		("Liens", {"fields": ("linkedin_url", "github_url", "medium_url", "youtube_url"), "classes": ("collapse",)} ),
 		("Localisation & Bio", {"fields": ("location", "bio"), "classes": ("collapse",)} ),
-		("Affichage Profil (position/titre/image)", {"fields": ("bio_position", "bio_show_title", "bio_title", "bio_title_image"), "classes": ("collapse",)} ),
+		("Affichage Profil (position/titre/image)", {"fields": ("bio_is_active", "bio_position", "bio_show_title", "bio_title", "bio_title_image"), "classes": ("collapse",)} ),
 		("Projets publiés", {"fields": ("published_projects", "featured_projects"), "classes": ("collapse",)} ),
 		("Articles publiés", {"fields": ("published_articles", "featured_articles"), "classes": ("collapse",)} ),
 		("Services publiés", {"fields": ("published_services", "featured_services"), "classes": ("collapse",)} ),
